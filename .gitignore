@@ -7,3 +7,6 @@
 .Trashes
 Icon?
 ethumbs.db
+thumbs.db
+.idea/*
+.idea
