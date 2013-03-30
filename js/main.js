@@ -18,4 +18,20 @@ window.onload = function() {
 function createSVG(id) {
     document.getElementById(id).style.fill = color;
 
+    d3.csv("csv/races_data.csv", function(d) {
+        return {
+            rider_id : d.rider_ID,
+            race: d.race,
+            POS: d.POS,
+            Num: +d.Num,
+            Rider_name: d.rider01,
+            machine: d.machine,
+            time: d.time,
+            speed: +d.speed
+
+        };
+    }, function(error, rows) {
+        console.log(rows);
+    });
+    console.info("test");
 }
