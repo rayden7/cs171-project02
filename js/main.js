@@ -11,7 +11,37 @@ Team Members:
 /* use this to test out your function */
 window.onload = function() {
     // changeColor();
-    d3.csv("csv/races_data.csv", function(d) {
+
+    createSVG();
+}
+
+/* changeColor takes a path ID and a color (hex value)
+ and changes that path's fill color */
+function createSVG() {
+
+    var margin = {top: 20, right: 80, bottom: 30, left: 50},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    var parseDate = d3.time.format("%Y%m%d").parse;
+
+    var x = d3.time.scale()
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var color = d3.scale.category10();
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left");
+
+   var RacesData = d3.csv("csv/races_data.csv", function(d) {
         return {
             RiderID: d.RiderID,
             RaceName: d.RaceName,
@@ -27,11 +57,6 @@ window.onload = function() {
     }, function(error, rows) {
         console.log(rows);
     });
-}
-
-/* changeColor takes a path ID and a color (hex value)
- and changes that path's fill color */
-function createSVG(id) {
 
 
 }
