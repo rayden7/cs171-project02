@@ -21,8 +21,8 @@ window.onload = function() {
             Num: d.Num,
            // Rider_name: d.Rider01,
            machine: d.Machine,
-            time: d.time,
-            speed: d.speed
+            time: d.Time,
+            speed: d.Speed
 
         };
     }, function(error, rows) {
