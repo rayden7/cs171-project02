@@ -11,21 +11,24 @@ Team Members:
 /* use this to test out your function */
 window.onload = function() {
     // changeColor();
+    var rider = "rider ID";
     d3.csv("csv/races_data.csv", function(d) {
         return {
-
-            race: d.race,
+            rider_id: d.rider_ID,
+            race: d.Race,
+           // year: Date(+d.Year, 0, 1),
             POS: d.POS,
-            Num: +d.Num,
-            Rider_name: d.rider01,
-            machine: d.machine,
+            Num: d.Num,
+           // Rider_name: d.Rider01,
+           machine: d.Machine,
             time: d.time,
-            speed: +d.speed
+            speed: d.speed
 
         };
     }, function(error, rows) {
         console.log(rows);
     });
+
 }
 
 /* changeColor takes a path ID and a color (hex value)
