@@ -1,4 +1,4 @@
-rider ID,Race,Year,POS,Num,Rider URL,Rider01,rider02,Machine,Time,Speed
+RiderID,RaceName,Year,Position,Number,Rider_URL,Rider1,Rider2,Machine,Time,Speed
 4307,TT 2012 Dainese Superbike TT Race Results,2012,1,1,/TT-Database/competitors.aspx?ride_id=4307,John McGuinness,,1000 Honda,46:03.1,128.078
 8526,TT 2012 Dainese Superbike TT Race Results,2012,2,4,/TT-Database/competitors.aspx?ride_id=8526,Cameron DONALD,,1000 Honda,46:17.9,127.78
 4310,TT 2012 Dainese Superbike TT Race Results,2012,3,5,/TT-Database/competitors.aspx?ride_id=4310,Bruce Anstey,,1000 Honda,47:00.2,126.938

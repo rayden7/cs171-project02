@@ -13,15 +13,16 @@ window.onload = function() {
     // changeColor();
     d3.csv("csv/races_data.csv", function(d) {
         return {
-
-            race: d.race,
-            POS: d.POS,
-            Num: +d.Num,
-            Rider_name: d.rider01,
-            machine: d.machine,
-            time: d.time,
-            speed: +d.speed
-
+            RiderID: d.RiderID,
+            RaceName: d.RaceName,
+            Year: d.Year,
+            Position: d.Position,
+            Number: +d.Number,
+            Rider1_name: d.Rider1,
+            Rider2_Name: d.Rider2,
+            Machine: d.Machine,
+            Time: d.Time,
+            Speed: +d.Speed
         };
     }, function(error, rows) {
         console.log(rows);
