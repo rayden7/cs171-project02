@@ -11,16 +11,9 @@ Team Members:
 /* use this to test out your function */
 window.onload = function() {
     // changeColor();
-}
-
-/* changeColor takes a path ID and a color (hex value)
- and changes that path's fill color */
-function createSVG(id) {
-    document.getElementById(id).style.fill = color;
-
     d3.csv("csv/races_data.csv", function(d) {
         return {
-            rider_id : d.rider_ID,
+
             race: d.race,
             POS: d.POS,
             Num: +d.Num,
@@ -33,5 +26,11 @@ function createSVG(id) {
     }, function(error, rows) {
         console.log(rows);
     });
-    console.info("test");
+}
+
+/* changeColor takes a path ID and a color (hex value)
+ and changes that path's fill color */
+function createSVG(id) {
+
+
 }
