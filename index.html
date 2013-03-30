@@ -2,21 +2,26 @@
 <html xmlns="http://www.w3.org/1999/html">
 <meta charset="utf-8">
 <head>
-    <title>The Isle of Man TT</title>
-    <link rel="stylesheet" type="text/css" href="styles/main_new.css"/>
+    <title>The Isle of Man TT - How Long Does It Take To Becoming Proficient?</title>
+
+    <link rel="stylesheet" type="text/css" href="styles/main.css"/>
+
     <!-- local copy of minified D3 library -->
     <script src="js/d3.v3.min.js"></script>
+
 </head>
 <body>
     <header>
-        <div class="header">     <!-- This is for the menus -->
-            <a>Main  </a>
-            <a>Races </a>
-            <a>Riders  </a>
-            <a>Maps   </a>
-            <a>Credits   </a>
-            <a>About </a>
-        </div>
+        <h1>The Isle of Man TT</h1>
+        <!-- This is for the menus -->
+        <ul id="main-nav">
+            <li><a href="index.html">Main</a></li>
+            <li><a href="races.html">Races</a></li>
+            <li><a href="riders.html">Riders</a></li>
+            <li><a href="maps.html">Maps</a></li>
+            <li><a href="credits.html">Credits</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
     </header>
 
     <article>
@@ -25,13 +30,16 @@
             <p>this is the aside where individual detailed rider info will show up</p>
         </aside>
 
+        <div id="viz"></div>
+
         <p>this is the main article, where the primary visualization will go</p>
     </article>
 
     <footer>
-        <p>Created by Leo Mejia and David Killeffer</p>
+        <p>David Killeffer & Leo Mejia</p>
     </footer>
-    <script>js/main.js</script>
 
+    <!-- our custom code for creating the visualization -->
+    <script src="js/main.js"></script>
 </body>
 </html>
