@@ -29,32 +29,38 @@
     .race1 {
         fill: none;
         stroke: steelblue;
-        stroke-width: 1.5px;
+        /*stroke-width: 1.5px;*/
+        stroke-width: 0.5px;
     }
     .race2 {
         fill: none;
         stroke: slategrey;
-        stroke-width: 1.5px;
+        /*stroke-width: 1.5px;*/
+        stroke-width: 0.5px;
     }
     .race3 {
         fill: none;
         stroke: lightcoral;
-        stroke-width: 1.5px;
+        /*stroke-width: 1.5px;*/
+        stroke-width: 0.5px;
     }
     .race4 {
         fill: none;
         stroke: saddlebrown;
-        stroke-width: 1.5px;
+        /*stroke-width: 1.5px;*/
+        stroke-width: 0.5px;
     }
     .race5 {
         fill: none;
         stroke: yellow;
-        stroke-width: 1.5px;
+        /*stroke-width: 1.5px;*/
+        stroke-width: 0.5px;
     }
 
 </style>
 <body>
-<script src="http://d3js.org/d3.v3.js"></script>
+<!--<script src="http://d3js.org/d3.v3.js"></script>-->
+<script src="../js/d3.v3.js"></script>
 <script>
 
 /*
@@ -101,8 +107,8 @@ var svg = d3.select("body").append("svg")
 // (int, Date, etc.)
 var dataset = [];
 
-// store each race name here
-var races = [];
+//// store each race name here
+//var races = [];
 
 
 // TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
@@ -301,7 +307,29 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
     });
 
 
-    //alert("all race names: ["+races.join()+"]");
+// see
+// http://stackoverflow.com/questions/12993906/how-to-create-a-multi-series-line-chart-with-series-for-each-unique-item-in-1st#
+// http://jsfiddle.net/YHW6H/1/
+
+// then we need to nest the data on Provider since we want to only draw one
+// line per provider
+//    data = d3.nest().key(function(d) { return d.provider; }).entries(data);
+
+
+    //dataset = d3.nest().key(function(d) { return d.Rider1; }).entries(dataset);
+
+    var superbikeRaces = d3.nest()
+    //dataset = d3.nest()
+                .key(function(d) { return d.Rider1; })
+                //.key(function(d) { return d.RaceClass === raceClasses["superbike"]; })
+                .entries(dataset, function(d) { return d.RaceClass === raceClasses["superbike"]; });
+
+    //var dsFiltered = dataset.filter( function(d) { return d.RaceClass === raceClasses["superbike"]; });
+
+
+
+
+        //alert("all race names: ["+races.join()+"]");
 
     //x.domain(d3.extent(dataset, function(d) { return parseDate(d.Year); }));
     x.domain(d3.extent(dataset, function(d) { return d.Year; }));
@@ -316,7 +344,6 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis)
             .append("text")
-            //.attr("x", 6)
             .attr("x", width / 2)
             .attr("y", 35)
             .attr("dx", ".71em")
@@ -328,26 +355,99 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
             .call(yAxis)
             .append("text")
             .attr("transform", "rotate(-90)")
-            //.attr("y", 6)
-            //.attr("y", -40)
             .attr("y", -40)
             .attr("x", -(height / 2))
-            //.attr("x", height / 2)
             .attr("dy", ".71em")
-            //.style("text-anchor", "end")
             .text("Position");
 
+    /*
+    var superbikeRacesFilter = function(d) {
+        for (var dKey in d) {
+            return d[dKey];
+        }
+    };
+    */
+
+    /*
+    var superbikeRacesFiltered = function() {
+        superbikeRaces.forEach(function(idx) {
+            //idx.forEach(function(key){
+            //    var p = idx[key];
+            //    return p;
+            //});
+
+            var q = idx.values;
+            return q;
+
+            //return superbikeRaces[key];
+            //return superbikeRaces.key(function(d) { return d[key]; });
+        });
+    };
+    */
+
+
+    var kk = 0;
+    superbikeRaces.forEach(function(idx) {
+        var j = idx.values;
+
+
+        svg.append("path")
+                .datum( idx.values )
+                .attr("class", "race1")
+                .attr("d", line);
+
+/*
+        j.forEach(function(rr) {
+            while (kk < 50) {
+
+            // just get the Superbike races
+            svg.append("path")
+               .datum( rr )
+               .attr("class", "race1")
+               .attr("d", line);
+
+            //svg.append("path")
+            //        .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["superbike"]; }))
+            //        .attr("class", "race4")
+            //        .attr("d", line);
+
+                kk++;
+            }
+
+        });
+
+*/
+    });
 
 
 
+    /*
     // just get the Superbike races
     svg.append("path")
             //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superbike") >= 0; }))
+            //.datum( dataset.filter( function(d) { return d.RaceClass === raceClasses["superbike"]; }) )
+            //.datum( dataset )
+            //.datum(dataset.nest().key(function(d) { return d.Rider1; }).entries(dataset).filter( function(d) { return d.RaceClass === raceClasses["superbike"]; }))
+            //.datum( d3.nest().key(function(d) { return d.Rider1; }).entries(dataset) )
+            //.datum( dataset )
+            //.datum( superbikeRaces, function(d) { for (var dKey in d) { return d[dKey]; }} )
+            //.datum( superbikeRaces, superbikeRacesFilter(d) )
+            //.datum( superbikeRaces.forEach(function(key) { superbikeRaces.key(function(d) { return d[key]; })} ) )
+            .datum( superbikeRacesFiltered )
+            //.datum( superbikeRaces, function(d) { return d.Rider1; } )
+            .attr("class", "race1")
+            .attr("d", line);
+    */
+
+
+    /*
+
+    // show Superbike races only
+    svg.append("path")
             .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["superbike"]; }))
             .attr("class", "race1")
             .attr("d", line);
 
-    /*
     // show Production races only
     svg.append("path")
             //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("production") >= 0; }))
@@ -375,7 +475,9 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
        .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["senior"]; }))
        .attr("class", "race5")
        .attr("d", line);
+
     */
+
 
 });
 
