@@ -7,7 +7,7 @@
  */
 
 /* ==========================================================================
-   Base styles: opinionated defaults
+   Base css: opinionated defaults
    ========================================================================== */
 
 html,
@@ -77,7 +77,7 @@ img {
 }
 
 /*
- * Remove default fieldset styles.
+ * Remove default fieldset css.
  */
 fieldset {
     border: 0;
@@ -107,7 +107,7 @@ textarea {
 
 
 /* ==========================================================================
-   Author's custom styles
+   Author's custom css
    ========================================================================== */
 
 * {
@@ -316,7 +316,7 @@ footer {
 
 /* ==========================================================================
    EXAMPLE Media Queries for Responsive Design.
-   Theses examples override the primary ('mobile first') styles.
+   Theses examples override the primary ('mobile first') css.
    Modify as content requires.
    ========================================================================== */
 
@@ -330,7 +330,7 @@ only screen and (min-resolution: 144dpi) {
 }
 
 /* ==========================================================================
-   Print styles.
+   Print css.
    Inlined to avoid required HTTP connection: h5bp.com/r
    ========================================================================== */
 
