@@ -351,7 +351,7 @@ d3.csv("races_data.csv", function(error, data) {
             .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["singles"]; }) );
 
 
-
+            /*
     sidecarRaces.forEach(function(idx) {
         svg.append("path")
                 .datum( idx.values )
@@ -407,13 +407,13 @@ d3.csv("races_data.csv", function(error, data) {
                 .attr("class", "race-line color8")
                 .attr("d", line);
     });
-
+           */
     seniorRaces.forEach(function(idx) {
         svg.append("path")
                 .datum( idx.values )
                 .attr("class", "race-line color9")
                 .attr("d", line);
-    });
+    });   /*
 
     openclassRaces.forEach(function(idx) {
         svg.append("path")
@@ -448,7 +448,7 @@ d3.csv("races_data.csv", function(error, data) {
                 .datum( idx.values )
                 .attr("class", "race-line color14")
                 .attr("d", line);
-    });
+    });  */
 
 });
 
