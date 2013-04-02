@@ -59,27 +59,17 @@
 
 </style>
 <body>
-<!--<script src="http://d3js.org/d3.v3.js"></script>-->
 <script src="../js/d3.v3.js"></script>
 <script>
 
-/*
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
-     width = 960 - margin.left - margin.right,
-     height = 600 - margin.top - margin.bottom;
-*/
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
         width = 1300 - margin.left - margin.right,
         height = 850 - margin.top - margin.bottom;
-        //width = 960 - margin.left - margin.right,
-        //height = 500 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%Y").parse;
 
-//var x = d3.scale.linear().range([0, width]);
-//var x = d3.time.scale.linear().range([0, width]);
-var x = d3.time.scale().range([0, width]);
 
+var x = d3.time.scale().range([0, width]);
 
 var y = d3.scale.linear()
           .range([height, 0]);
@@ -106,9 +96,6 @@ var svg = d3.select("body").append("svg")
 // and also so we can massage the data as it is loaded from the CSV into the JavaScript datatypes we want to use
 // (int, Date, etc.)
 var dataset = [];
-
-//// store each race name here
-//var races = [];
 
 
 // TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
@@ -279,16 +266,9 @@ function getRaceClass(raceName) {
         }
     }
     return null;  // race class not found
-    //alert("race class not found!");
-    //return "BAD RACE CLASS";
 }
 
 
-
-
-
-//d3.csv("single-rider-2.csv", function(error, data) {
-//d3.csv("races_data.csv", function(error, data) {
 d3.csv("races_data_custom_2.csv", function(error, data) {
     data.forEach(function(d) {
         dataset.push({
@@ -306,37 +286,12 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
         });
     });
 
-
-// see
-// http://stackoverflow.com/questions/12993906/how-to-create-a-multi-series-line-chart-with-series-for-each-unique-item-in-1st#
-// http://jsfiddle.net/YHW6H/1/
-
-// then we need to nest the data on Provider since we want to only draw one
-// line per provider
-//    data = d3.nest().key(function(d) { return d.provider; }).entries(data);
-
-
-    //dataset = d3.nest().key(function(d) { return d.Rider1; }).entries(dataset);
-
+    // filter out all the Superbike races by rider
     var superbikeRaces = d3.nest()
-    //dataset = d3.nest()
-                .key(function(d) { return d.Rider1; })
-                //.key(function(d) { return d.RaceClass === raceClasses["superbike"]; })
-                .entries(dataset, function(d) { return d.RaceClass === raceClasses["superbike"]; });
+                           .key(function(d) { return d.Rider1; })
+                           .entries(dataset, function(d) { return d.RaceClass === raceClasses["superbike"]; });
 
-    //var dsFiltered = dataset.filter( function(d) { return d.RaceClass === raceClasses["superbike"]; });
-
-
-
-
-        //alert("all race names: ["+races.join()+"]");
-
-    //x.domain(d3.extent(dataset, function(d) { return parseDate(d.Year); }));
     x.domain(d3.extent(dataset, function(d) { return d.Year; }));
-    //x.domain([
-    //    d3.min(dataset, function(d) { return d.Year; })-1,
-    //    d3.max(dataset, function(d) { return d.Year; })+1
-    //]);
     y.domain([d3.max(dataset, function(d) { return d.Position; }) + 1, 1]);  // go from last place (plus 1, to give a bit of a space buffer) to first place
 
     svg.append("g")
@@ -360,84 +315,22 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
             .attr("dy", ".71em")
             .text("Position");
 
-    /*
-    var superbikeRacesFilter = function(d) {
-        for (var dKey in d) {
-            return d[dKey];
-        }
-    };
-    */
 
-    /*
-    var superbikeRacesFiltered = function() {
-        superbikeRaces.forEach(function(idx) {
-            //idx.forEach(function(key){
-            //    var p = idx[key];
-            //    return p;
-            //});
+    // filter out all the Superbike races by rider
+    var superbikeRaces = d3.nest()
+            .key(function(d) { return d.Rider1; })
+            .entries(dataset, function(d) { return d.RaceClass === raceClasses["superbike"]; });
 
-            var q = idx.values;
-            return q;
-
-            //return superbikeRaces[key];
-            //return superbikeRaces.key(function(d) { return d[key]; });
-        });
-    };
-    */
-
-
-    var kk = 0;
+    // just show the Superbike races per rider - each line will correspond to a
+    // rider's performance placement year-over-year in the Superbike TT
     superbikeRaces.forEach(function(idx) {
         var j = idx.values;
-
-
         svg.append("path")
                 .datum( idx.values )
                 .attr("class", "race1")
                 .attr("d", line);
-
-/*
-        j.forEach(function(rr) {
-            while (kk < 50) {
-
-            // just get the Superbike races
-            svg.append("path")
-               .datum( rr )
-               .attr("class", "race1")
-               .attr("d", line);
-
-            //svg.append("path")
-            //        .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["superbike"]; }))
-            //        .attr("class", "race4")
-            //        .attr("d", line);
-
-                kk++;
-            }
-
-        });
-
-*/
     });
 
-
-
-    /*
-    // just get the Superbike races
-    svg.append("path")
-            //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superbike") >= 0; }))
-            //.datum( dataset.filter( function(d) { return d.RaceClass === raceClasses["superbike"]; }) )
-            //.datum( dataset )
-            //.datum(dataset.nest().key(function(d) { return d.Rider1; }).entries(dataset).filter( function(d) { return d.RaceClass === raceClasses["superbike"]; }))
-            //.datum( d3.nest().key(function(d) { return d.Rider1; }).entries(dataset) )
-            //.datum( dataset )
-            //.datum( superbikeRaces, function(d) { for (var dKey in d) { return d[dKey]; }} )
-            //.datum( superbikeRaces, superbikeRacesFilter(d) )
-            //.datum( superbikeRaces.forEach(function(key) { superbikeRaces.key(function(d) { return d[key]; })} ) )
-            .datum( superbikeRacesFiltered )
-            //.datum( superbikeRaces, function(d) { return d.Rider1; } )
-            .attr("class", "race1")
-            .attr("d", line);
-    */
 
 
     /*
