@@ -46,6 +46,11 @@
         stroke: saddlebrown;
         stroke-width: 1.5px;
     }
+    .race5 {
+        fill: none;
+        stroke: yellow;
+        stroke-width: 1.5px;
+    }
 
 </style>
 <body>
@@ -58,10 +63,10 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
      height = 600 - margin.top - margin.bottom;
 */
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
-        //width = 1200 - margin.left - margin.right,
-        //height = 700 - margin.top - margin.bottom;
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 1300 - margin.left - margin.right,
+        height = 850 - margin.top - margin.bottom;
+        //width = 960 - margin.left - margin.right,
+        //height = 500 - margin.top - margin.bottom;
 
 var parseDate = d3.time.format("%Y").parse;
 
@@ -100,59 +105,8 @@ var dataset = [];
 var races = [];
 
 
-
 // TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
 
-/*
-var raceClasses = [
-                    "sidecar",
-                    "zero",
-                    "supersport",
-                    "superbike",
-                    "superstock",
-                    "ultra lightweight",
-                    "lightweight",
-                    "junior",
-                    "senior",
-                    "open class",
-                    "pro class",
-                    "formula one",
-                    "production",
-                    "singles"
-                  ];
-
-function getRaceClass(raceName) {
-    for (var i=0; i<raceClasses.length; i++) {
-        if (raceName.toLowerCase().indexOf(raceClasses[i]) > -1) {
-            return raceClasses[i];
-        }
-        else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
-            return "lightweight";
-        }
-    }
-    return null;  // race class not found
-    //alert("race class not found!");
-    //return "BAD RACE CLASS";
-}
-*/
-
-/*
- var raceClasses = [
- "zero",
- "supersport",
- "superbike",
- "superstock",
- "ultra lightweight",
- "lightweight",
- "junior",
- "senior",
- "open class",
- "pro class",
- "formula one",
- "production",
- "singles"
- ];
- */
 
 /*
 information on race classes, laps/miles, etc. comes from:
@@ -310,26 +264,14 @@ var raceClasses = {
     };
 
 function getRaceClass(raceName) {
-    /*
-    for (var i=0; i<raceClasses.length; i++) {
-        if (raceName.toLowerCase().indexOf(raceClasses[i]) > -1) {
-            return raceClasses[i];
+    for (var raceKey in raceClasses) {
+        if (raceName.toLowerCase().indexOf(raceKey) > -1) {
+            return raceClasses[raceKey];
         }
         else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
-            return "lightweight";
+            return raceClasses["lightweight"];
         }
     }
-    */
-    for (var keyRaceName in raceClasses) {
-        if (raceName.toLowerCase().indexOf(keyRaceName) > -1) {
-            return raceClasses.keyRaceName;
-        }
-        else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
-            //return "lightweight";
-            return raceClasses.lightweight
-        }
-    }
-
     return null;  // race class not found
     //alert("race class not found!");
     //return "BAD RACE CLASS";
@@ -337,36 +279,24 @@ function getRaceClass(raceName) {
 
 
 
+
+
 //d3.csv("single-rider-2.csv", function(error, data) {
-d3.csv("races_data.csv", function(error, data) {
+//d3.csv("races_data.csv", function(error, data) {
+d3.csv("races_data_custom_2.csv", function(error, data) {
     data.forEach(function(d) {
-
-        // populate distinct race names array
-        if ( !races.indexOf(d.RaceName) > -1 ) {
-            races.push(
-                    {
-                        raceName: d.RaceName,
-                        raceClass: getRaceClass(d.RaceName)
-
-                    }
-            );
-        }
-
         dataset.push({
                     RiderID: +d.RiderID,  // parse the RiderID as a number
                     RaceName: d.RaceName,
-                    //Year: +d.Year,
-                    Year: new Date(d.Year,0),
+                    Year: new Date(d.Year,0),  // parse the year into a Date object
                     Position: +d.Position, // parse the race Position as a number
-                    BikeNumber: +d.BikeNumber,
+                    BikeNumber: +d.BikeNumber,  // parse the BikeNumber as a number
                     Rider1: d.Rider1,
                     Rider2: d.Rider2,
                     Machine: d.Machine,
                     Time: d.Time,
                     Speed: +d.Speed, // parse the Speed as a number
-                    // found code to easily filter on JS objects here: http://jsfiddle.net/g4Tf5/
-                    //RaceClass: races.filter(function(val) { return val.raceName === d.RaceName })
-                    RaceClass: getRaceClass(d.RaceName)
+                    RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
         });
     });
 
@@ -407,31 +337,45 @@ d3.csv("races_data.csv", function(error, data) {
             //.style("text-anchor", "end")
             .text("Position");
 
-    /*
+
+
+
     // just get the Superbike races
     svg.append("path")
-            .datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superbike") >= 0; }))
+            //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superbike") >= 0; }))
+            .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["superbike"]; }))
             .attr("class", "race1")
             .attr("d", line);
 
+    /*
     // show Production races only
     svg.append("path")
-            .datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("production") >= 0; }))
+            //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("production") >= 0; }))
+            .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["production"]; }))
             .attr("class", "race2")
             .attr("d", line);
 
     // show Superstock races only
     svg.append("path")
-            .datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superstock") >= 0; }))
+            //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("superstock") >= 0; }))
+            .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["superstock"]; }))
             .attr("class", "race3")
             .attr("d", line);
-    */
+
+    // show Supersport races only
+    svg.append("path")
+            //.datum(dataset.filter( function(d) {  return d.RaceName.toLowerCase().indexOf("supersport") >= 0; }))
+            .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["supersport"]; }))
+            .attr("class", "race4")
+            .attr("d", line);
 
     // show Senior races only
     svg.append("path")
-       .datum(dataset.filter( function(d) { return d.RaceName.toLowerCase().indexOf("senior") >= 0; }) )
-       .attr("class", "race4")
+       //.datum(dataset.filter( function(d) { return d.RaceName.toLowerCase().indexOf("senior") >= 0; }) )
+       .datum(dataset.filter( function(d) {  return d.RaceClass === raceClasses["senior"]; }))
+       .attr("class", "race5")
        .attr("d", line);
+    */
 
 });
 
