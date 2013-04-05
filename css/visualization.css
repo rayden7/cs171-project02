@@ -1,0 +1,64 @@
+
+#viz {
+    border: 1px solid black;
+    background-color: white;
+    width: 950px;
+    height: 525px;
+
+    width: 1400px;
+    height: 850px;
+
+    margin: 10px;
+    padding: 5px;
+}
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1.5px;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    /* show the x-axis */
+    /*display: none;*/
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+
+
+.race-line { fill: none; stroke-width: 0.5px; }
+
+.race-line-selected {
+    fill: none;
+    stroke-width: 1.5px;
+    stroke-width: 2.5px;
+}
+
+.colorSelected { stroke: black; }
+
+/* see http://www.w3.org/TR/SVG/types.html#ColorKeywords for more color names */
+.color1 { stroke: blue; }
+.color2 { stroke: blueviolet; }
+.color3 { stroke: brown; }
+/*.color4 { stroke: burlywood; }*/
+.color4 { stroke: brown; }
+.color5 { stroke: cadetblue; }
+.color6 { stroke: chartreuse; }
+.color7 { stroke: chocolate; }
+.color8 { stroke: orange; }
+.color9 { stroke: orangered; }
+.color10 { stroke: olive; }
+.color11 { stroke: lawngreen; }
+/*.color12 { stroke: lightblue; }*/
+.color12 { stroke: darkblue; }
+.color13 { stroke: gray; }
+.color14 { stroke: indigo; }
+
