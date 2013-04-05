@@ -4,8 +4,9 @@
 CS171 Project 2, Team Data Visualization for the Isle of Man TT
 
 Team Members:
-    Leo Mejia <kolopaisa@gmail.com>
     David Killeffer <rayden7@gmail.com>
+    Leo Mejia <kolopaisa@gmail.com>
+
    */
 
 /* use this to test out your function */
