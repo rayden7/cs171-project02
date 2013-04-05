@@ -34,7 +34,11 @@
 
 
 
-.race-line { fill: none; stroke-width: 0.5px; }
+.race-line {
+    fill: none;
+    stroke-width: 0.5px;
+    stroke-width: 0.75px;
+}
 
 .race-line-selected {
     fill: none;

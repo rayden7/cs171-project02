@@ -26,13 +26,22 @@
     }
 
 
+
     .race-line { fill: none; stroke-width: 0.5px; }
 
-        /* see http://www.w3.org/TR/SVG/types.html#ColorKeywords for more color names */
+    .race-line-selected {
+        fill: none;
+        stroke-width: 1.5px;
+        stroke-width: 2.5px;
+    }
+
+    .colorSelected { stroke: black; }
+
+    /* see http://www.w3.org/TR/SVG/types.html#ColorKeywords for more color names */
     .color1 { stroke: blue; }
     .color2 { stroke: blueviolet; }
     .color3 { stroke: brown; }
-        /*.color4 { stroke: burlywood; }*/
+    /*.color4 { stroke: burlywood; }*/
     .color4 { stroke: brown; }
     .color5 { stroke: cadetblue; }
     .color6 { stroke: chartreuse; }
@@ -41,7 +50,7 @@
     .color9 { stroke: orangered; }
     .color10 { stroke: olive; }
     .color11 { stroke: lawngreen; }
-        /*.color12 { stroke: lightblue; }*/
+    /*.color12 { stroke: lightblue; }*/
     .color12 { stroke: darkblue; }
     .color13 { stroke: gray; }
     .color14 { stroke: indigo; }
@@ -362,6 +371,17 @@ function getTooltipText(d) {
 }
 
 
+/*
+ * Because the different race names have overlaps (e.g., there are often several races of a given class in a
+ * particular year, some races only offered in a single year, etc.) it is necessary to correlate a given race
+ * with a particular "raceClass".  Because there were several splinterings of different race classes, often times
+ * a given category of race would change, or there might be multiple variants of a given race in a given year,
+ * both (or more) of which a competitor might have raced in.  This presents a problem in the visualization - an odd
+ * vertical line banding occurs because it attempts to connect two different race classes in the same year to each
+ * other.  To resolve this we restrict ourselves to the set of uniquely identified race classes mentioned below, and
+ * we ensure that ONLY ONE of each race class occurs per year, so there is no chance for the weird vertical line
+ * banding effect we had originally seen in some of our earlier visualization iterations.
+ */
 var racesToExclude = [
     "TT 1999 Lightweight 400 TT Results",
     "TT 2000 Lightweight 400 TT Results",
@@ -371,16 +391,20 @@ var racesToExclude = [
     "TT 2004 Production 600 Results",
     "TT 2009 TTXGP Open Class Results",
     "TT 2005 IOMSPC Supersport Junior B Results",
+    "TT 2006 IOMSPC Supersport Results",
+    "TT 2006 IOMSPC Supersport Results",
+    "TT 2007 Pokerstars Supersport TT Results",
     "TT 2008 Relentless Supersport Junior TT 2 Results",
     "TT 2009 Motorsport Merchandise Lightweight 250 TT #2 Results",
-    "TT 2009 Motorsport Merchandise Ultra Lightweight 125 TT #2 Results",
-    "TT 2006 IOMSPC Supersport Results",
-    "TT 2007 Pokerstars Supersport TT Results"
+    "TT 2009 Motorsport Merchandise Ultra Lightweight 125 TT #2 Results"
 ];
 
 
+
 //d3.csv("races_data.csv", function(error, data) {
-d3.csv("races_data-cleaned-racetypes-2013-04-02.csv", function(error, data) {
+//d3.csv("races_data-cleaned-racetypes-2013-04-02.csv", function(error, data) {
+//d3.csv("races_data-cleaned-racetypes-2013-04-04.csv", function(error, data) {
+d3.csv("races_data.csv", function(error, data) {
     data.forEach(function(d) {
         /*
          races to discard data for:
@@ -406,21 +430,23 @@ d3.csv("races_data-cleaned-racetypes-2013-04-02.csv", function(error, data) {
 
         */
 
-
-        dataset.push({
-            RiderID: +d.RiderID,  // parse the RiderID as a number
-            RaceName: d.RaceName,
-            RaceType: d.RaceType,
-            Year: new Date(d.Year,0),  // parse the year into a Date object
-            Position: +d.Position, // parse the race Position as a number
-            BikeNumber: +d.BikeNumber,  // parse the BikeNumber as a number
-            Rider1: d.Rider1,
-            Rider2: d.Rider2,
-            Machine: d.Machine,
-            Time: d.Time,
-            Speed: +d.Speed, // parse the Speed as a number
-            RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
-        });
+        // only add race data for the races not on the list of ones ot exlude
+        if (racesToExclude.indexOf(d.RaceName) == -1) {
+            dataset.push({
+                RiderID: +d.RiderID,  // parse the RiderID as a number
+                RaceName: d.RaceName,
+                RaceType: d.RaceType,
+                Year: new Date(d.Year,0),  // parse the year into a Date object
+                Position: +d.Position, // parse the race Position as a number
+                BikeNumber: +d.BikeNumber,  // parse the BikeNumber as a number
+                Rider1: d.Rider1,
+                Rider2: d.Rider2,
+                Machine: d.Machine,
+                Time: d.Time,
+                Speed: +d.Speed, // parse the Speed as a number
+                RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
+            });
+        }
     });
 
      // filter out all the Superbike races by rider
@@ -604,29 +630,30 @@ d3.csv("races_data-cleaned-racetypes-2013-04-02.csv", function(error, data) {
     //        .key(function(d) { return d.Rider1; })
     //        .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["formulaone"]; }) );
     var formulaoneRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
+            .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
+            .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
             .entries(
-            dataset.filter(function(d) {
-                //return d.RaceClass === raceClasses["formulaone"];
-                // David Jeffries, John McGuinness, and Jim Moodie
-                //return d.RaceClass === raceClasses["formulaone"] && (d.RiderID === 4322 || d.RiderID === 4307 || d.RiderID === 3962);
+                dataset.filter(function(d) {
+                    //return d.RaceClass === raceClasses["formulaone"];
+                    // David Jeffries, John McGuinness, and Jim Moodie
+                    //return d.RaceClass === raceClasses["formulaone"] && (d.RiderID === 4322 || d.RiderID === 4307 || d.RiderID === 3962);
 
-                /*
-                 1993 - sixth place  3962,TT 1993 Formula One TT Results,formulaone,1993,6,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda,1.57.52.4,115.23
-                 1994 - NO JIM MOODIE 1994 formulaone record
-                 1995 - NO 1995 JIM MOODIE formulaone race
-                 1996 - fifteenth place  3962,TT 1996 Formula One TT Results,formulaone,1996,15,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Kawasaki Reve,2.01.58.0,111.36
-                 1997 - did not finish   3962,TT 1997 Formula One TT Results,formulaone,1997,DNF,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Suzuki 750,,0
-                 1998 - NO JIM MOODIE formulaone record
-                 1999 - did not finish   3962,TT 1999 Formula One TT Results,formulaone,1999,DNF,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda UK RC45,,0
-                 2000 - fifth place   3962,TT 2000 Formula One TT Results,formulaone,2000,5,5,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda Britain Fireblade,1.55.08.6,117.95
-                 2001 - no records, TT cancelled
-                 2002 - third place   3962,TT 2002 Duke TT Formula One Results,formulaone,2002,3,2,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,1000 V&amp;M YAMAHA,1 51 09.6,122.19
-                 */
-                // just Jim Moodie
-                return d.RaceClass === raceClasses["formulaone"] && (d.RiderID === 3962);
-            })
+                    /*
+                     1993 - sixth place  3962,TT 1993 Formula One TT Results,formulaone,1993,6,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda,1.57.52.4,115.23
+                     1994 - NO JIM MOODIE 1994 formulaone record
+                     1995 - NO 1995 JIM MOODIE formulaone race
+                     1996 - fifteenth place  3962,TT 1996 Formula One TT Results,formulaone,1996,15,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Kawasaki Reve,2.01.58.0,111.36
+                     1997 - did not finish   3962,TT 1997 Formula One TT Results,formulaone,1997,DNF,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Suzuki 750,,0
+                     1998 - NO JIM MOODIE formulaone record
+                     1999 - did not finish   3962,TT 1999 Formula One TT Results,formulaone,1999,DNF,0,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda UK RC45,,0
+                     2000 - fifth place   3962,TT 2000 Formula One TT Results,formulaone,2000,5,5,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,Honda Britain Fireblade,1.55.08.6,117.95
+                     2001 - no records, TT cancelled
+                     2002 - third place   3962,TT 2002 Duke TT Formula One Results,formulaone,2002,3,2,http://www.iomtt.com/TT-Database/competitors.aspx?ride_id=3962,Jim Moodie,,1000 V&amp;M YAMAHA,1 51 09.6,122.19
+                     */
+                    // just Jim Moodie
+                    //return d.RaceClass === raceClasses["formulaone"] && (d.RiderID === 3962);
+                    return d.RaceClass === raceClasses["formulaone"];
+                })
     );
 
     /*
@@ -747,32 +774,42 @@ d3.csv("races_data-cleaned-racetypes-2013-04-02.csv", function(error, data) {
         idx.values.forEach(function(innerIdx) {
             //svg.append("path")
             g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color12")
+                .datum( innerIdx.values )
+                .attr("class", "race-line color12")
                 //.attr("d", line);
-                    .attr("d", lineClosed);
-            //.attr("d", lineClosed)
-            //.append("svg:title")
-            //    .text(function(d, i) { return getTooltipText(d); });
-
-        })
+                .attr("d", lineClosed)
+                //.attr("d", lineClosed)
+                //.append("svg:title")
+                //.text(function(d, i) { return getTooltipText(d); });
+                // see:
+                // http://bl.ocks.org/natemiller/0c3659e0e6a0b77dabb0
+                // http://stackoverflow.com/questions/14823910/update-line-order-z-orientation-on-mouseover-in-d3
+                .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
+                .on("mouseout", function(d) { d3.select(this).attr("class","race-line color12"); });
+        });
     });
 
-    /*
      productionRaces.forEach(function(idx) {
-     svg.append("path")
-     .datum( idx.values )
-     .attr("class", "race-line color13")
-     .attr("d", line);
+         idx.values.forEach(function(innerIdx) {
+             g.append("path")
+                     .datum( innerIdx.values )
+                     .attr("class", "race-line color13")
+                     .attr("d", lineClosed)
+                     .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
+                     .on("mouseout", function(d) { d3.select(this).attr("class","race-line color12"); });
+         });
      });
 
      singlesRaces.forEach(function(idx) {
-     svg.append("path")
-     .datum( idx.values )
-     .attr("class", "race-line color14")
-     .attr("d", line);
+         idx.values.forEach(function(innerIdx) {
+             g.append("path")
+                     .datum( innerIdx.values )
+                     .attr("class", "race-line color14")
+                     .attr("d", lineClosed)
+                     .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
+                     .on("mouseout", function(d) { d3.select(this).attr("class","race-line color12"); });
+         });
      });
-     */
 
 });
 
