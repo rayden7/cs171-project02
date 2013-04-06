@@ -34,7 +34,20 @@ aside {
     #riderInfo {
         margin-top: 0;
         min-height: 450px;
-        height: 500px;
+        height: 550px;
+        /*margin-left: 10px;*/
+        padding: 5px;
+        overflow-y: scroll;
+        overflow: -moz-scrollbars-vertical;
+    }
+
+    img.floatleft {
+
+        border: 10px solid red;
+        border: 1px solid black;
+        float: left;
+        margin: 0 0 3px 3px;
+        /*clear: both;*/
     }
 
     #viz-info {
@@ -52,6 +65,26 @@ aside {
         -moz-border-radius: 0.9em;
         -webkit-border-radius: 0.9em;
     }
+
+hr {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    clear: both;
+}
+.ttCareerSummary,
+.ttCareerSummary tr,
+.ttCareerSummary th,
+.ttCareerSummary td {
+    border-collapse:collapse;
+    margin-top: 5px;
+    border: 1px solid black;
+    padding: 5px;
+}
+
+.riderPics {
+    margin: 3px;
+    border: 1px solid black;
+}
 
 .axis path,
 .axis line {

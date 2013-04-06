@@ -21,6 +21,8 @@ window.onload = function() {
     var y = d3.scale.linear()
         .range([height, 0]);
 
+    // NOTE: we are initially declaring our X and Y axes because we want to use custom labels,
+    // and we are intimately familiar with the dataset, so we know the ranges for each
     var xAxis = d3.svg.axis()
         .scale(x)
         .tickValues([
@@ -83,6 +85,9 @@ window.onload = function() {
     // and also so we can massage the data as it is loaded from the CSV into the JavaScript datatypes we want to use
     // (int, Date, etc.)
     var dataset = [];
+
+    // save all the individual rider info here
+    var riderDataset = [];
 
 
 // TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
@@ -328,6 +333,47 @@ window.onload = function() {
         "TT 2009 Motorsport Merchandise Ultra Lightweight 125 TT #2 Results"
     ];
 
+
+
+
+    // load in the CSV of all the rider information data
+    d3.csv("csv/rider-data.csv", function(error, data) {
+        data.forEach(function(d) {
+            riderDataset.push({
+                RiderID: +d.RiderID, // parse the RiderID as a number
+                RiderName: d.RiderName,
+                TTDatabaseWebpage: d.TTDatabaseWebpage,
+                UPPERCASERider: d.UPPERCASERider,
+                Biography: d.Biography,
+                Picture1: d.Picture1,
+                Picture2: d.Picture2,
+                Picture3: d.Picture3,
+                Weight: +d.Weight, // parse rider weight as a number
+                Height: d.Height,
+                Website: d.Website,
+                // parse out all the frequencies of race placement as integer values
+                TTCareerSummaryPosition1: +d.TTCareerSummaryPosition1,
+                TTCareerSummaryPosition2: +d.TTCareerSummaryPosition2,
+                TTCareerSummaryPosition3: +d.TTCareerSummaryPosition3,
+                TTCareerSummaryPosition4: +d.TTCareerSummaryPosition4,
+                TTCareerSummaryPosition5: +d.TTCareerSummaryPosition5,
+                TTCareerSummaryPosition6: +d.TTCareerSummaryPosition6,
+                TTCareerSummaryPosition7: +d.TTCareerSummaryPosition7,
+                TTCareerSummaryPosition8: +d.TTCareerSummaryPosition8,
+                TTCareerSummaryPosition9: +d.TTCareerSummaryPosition9,
+                TTCareerSummaryPosition10: +d.TTCareerSummaryPosition10,
+                TTCareerSummaryPositionDNF: +d.TTCareerSummaryPositionDNF
+            });
+        });
+
+        console.log("riderDataset.length: " +riderDataset.length);
+    });
+
+
+
+
+
+
     // load in the CSV of all the races data
     d3.csv("csv/races_data.csv", function(error, data) {
         data.forEach(function(d) {
@@ -463,6 +509,7 @@ window.onload = function() {
             .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
             .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
             .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["formulaone"]; }) );
+            //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["formulaone"] && d.RiderID === 4917; }) ); // test on Allan Warner
 
         var juniorRaces = d3.nest()
             .key(function(d) { return d.Rider1; })
@@ -555,37 +602,76 @@ window.onload = function() {
             this._xoff = cushion[0] + mouse[0] + pos.left;
             this._yoff = cushion[1] + mouse[1] + pos.top;
 
+            // try to find information in riderDataset on this particular rider based on the RiderID value
+            var curRiderID = d[0].RiderID;
+            var riderInfo = riderDataset.filter(function(d) { return d.RiderID === curRiderID; });
+
+            // if we found the rider info in the riderDataset, build out the ASIDE detailed info on the rider
+            if ( riderInfo !== null && riderInfo.length === 1) {
+                var riderInfoHTML = "<h2><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+"</a></h2>\n";
+                riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+" TT Database</a></p><br />\n";
+
+                // clean and show the rider biography
+                var bio = riderInfo[0].Biography;
+                if (bio !== null && bio.length > 0) {
+                    // if we find any occurrences of two successive single quotes, replace them with one single quote
+                    bio = bio.replace(/""+/ig, '"');
+                    // update the IOMTT database website relative path for any inline images to use the
+                    // fully-qualified URL to the images
+                    bio = bio.replace(/\/images\/cache/ig, 'http://www.iomtt.com/images/cache');
+                    riderInfoHTML += "<p>"+bio+"</p>\n";
+                }
+
+                // show any rider pictures we found
+                if (
+                       //(riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) ||
+                       (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) ||
+                       (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0)
+                ) {
+                    riderInfoHTML += "<hr />\n";
+                    //if (riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) {
+                    //    riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture1+"\" title=\""+riderInfo[0].RiderName+"\ picture 1\" />\n";
+                    //}
+                    if (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) {
+                        riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture2+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
+                    }
+                    if (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0) {
+                        riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture3+"\" title=\""+riderInfo[0].RiderName+"\ picture 3\" />\n";
+                    }
+                }
+
+                // determine if we have non-zero values for career TT race placement in positions 1-10, or DNF occurrences
+                var occ1   = (isNaN(riderInfo[0].TTCareerSummaryPosition1))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition1);
+                var occ2   = (isNaN(riderInfo[0].TTCareerSummaryPosition2))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition2);
+                var occ3   = (isNaN(riderInfo[0].TTCareerSummaryPosition3))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition3);
+                var occ4   = (isNaN(riderInfo[0].TTCareerSummaryPosition4))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition4);
+                var occ5   = (isNaN(riderInfo[0].TTCareerSummaryPosition5))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition5);
+                var occ6   = (isNaN(riderInfo[0].TTCareerSummaryPosition6))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition6);
+                var occ7   = (isNaN(riderInfo[0].TTCareerSummaryPosition7))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition7);
+                var occ8   = (isNaN(riderInfo[0].TTCareerSummaryPosition8))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition8);
+                var occ9   = (isNaN(riderInfo[0].TTCareerSummaryPosition9))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition9);
+                var occ10  = (isNaN(riderInfo[0].TTCareerSummaryPosition10))  ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition10);
+                var occDNF = (isNaN(riderInfo[0].TTCareerSummaryPositionDNF)) ? 0 : parseInt(riderInfo[0].TTCareerSummaryPositionDNF);
+                if ( occ1>0 || occ2>0 || occ3>0 || occ4> 0 || occ5>0 || occ6>0 || occ7>0 || occ8>0 || occ9>0 || occ10>0 || occDNF>0 ) {
+                    riderInfoHTML += "<hr />\n";
+                    riderInfoHTML += "<p>This table shows how many times has come in each of the top ten places in any TT race, and how many times they did not finish (DNF) a race they began.</p>\n";
+                    riderInfoHTML += "<table class=\"ttCareerSummary\" summary=\"TT Career Summary\"><caption><strong>TT Career Summary</strong></caption><tr><th id=\"position\">Position</th><td headers=\"position\">1</td><td headers=\"position\">2</td><td headers=\"position\">3</td><td headers=\"position\">4</td><td headers=\"position\">5</td><td headers=\"position\">6</td><td headers=\"position\">7</td><td headers=\"position\">8</td><td headers=\"position\">9</td><td headers=\"position\">10</td><td headers=\"position\"><abbr title=\"Did not finish\">DNF</abbr></td></tr><tr><th id=\"numTimes\">No of times</th><td headers=\"numTimes\">"+occ1+"</td><td headers=\"numTimes\">"+occ2+"</td><td headers=\"numTimes\">"+occ3+"</td><td headers=\"numTimes\">"+occ4+"</td><td headers=\"numTimes\">"+occ5+"</td><td headers=\"numTimes\">"+occ6+"</td><td headers=\"numTimes\">"+occ7+"</td><td headers=\"numTimes\">"+occ8+"</td><td headers=\"numTimes\">"+occ9+"</td><td headers=\"numTimes\">"+occ10+"</td><td headers=\"numTimes\">"+occDNF+"</td></tr></table>";
+                }
+
+                // update the rider info div with the detailed HTML
+                $("#riderInfo").html(riderInfoHTML);
+            }
+
+            // build out the text to show on the TOOLTIP
             var riderInfoText = "<ul>\n";
             riderInfoText += "<li><b>Rider:</b> "+d[0].Rider1+"</li>\n";
             if (d[0].Rider2 !== null && d[0].Rider2.length > 0) {
                 riderInfoText += "<li><b>Second Rider:</b> "+d[0].Rider2+"</li>\n";
             }
-            //riderInfoText += "<li><b>Rider ID:</b> "+d[0].RiderID+"</li>\n";
-            //riderInfoText += "<li><b>Race:</b> "+d[0].RaceName+"</li>\n";
-
             riderInfoText += "<li><b>Race Class:</b> "+d[0].RaceClass.Class+"</li>\n";
-
-            /*
-            riderInfoText += "<li><b>Year:</b> "+d[0].Year.getFullYear()+"</li>\n";
-            riderInfoText += "<li><b>Race Position:</b> "+d[0].Position+"</li>\n";
-            riderInfoText += "<li><b>Bike Number:</b> "+d[0].BikeNumber+"</li>\n";
-            riderInfoText += "<li><b>Machine:</b> "+d[0].Machine+"</li>\n";
-            riderInfoText += "<li><b>Time:</b> "+d[0].Time+"</li>\n";
-            riderInfoText += "<li><b>Speed:</b> "+d[0].Speed+"</li>\n";
-            riderInfoText += "</ul>\n";
-            riderInfoText += "<ul>\n";
-            riderInfoText += "<li><b>Race Class:</b> "+d[0].RaceClass.Class+"</li>\n";
-            riderInfoText += "<li><b>Class Laps:</b> "+d[0].RaceClass.Laps+"</li>\n";
-            riderInfoText += "<li><b>Distance (miles):</b> "+d[0].RaceClass.DistanceMiles+"</li>\n";
-            riderInfoText += "<li><b>Fastest Lap Record:</b> "+d[0].RaceClass.FastestLapRider+"</li>\n";
-            riderInfoText += "<li><b>Fastest Avg. Speed:</b> "+d[0].RaceClass.AverageSpeed+"</li>\n";
-            riderInfoText += "<li><b>Race Info:</b> "+d[0].RaceClass.Notes+"</li>\n";
-             */
             riderInfoText += "</ul>\n";
 
-            // jQuery method of showing the tooltip
-            //$("#riderInfo").html(riderInfoText);
-
+            // show the TOOLTIP in the main visualization area
             info.enter()
                 .append("div")
                 .attr("class","race-line-tooltip")
@@ -595,8 +681,6 @@ window.onload = function() {
             // highlight the race line by making it have a thicker line stroke and color it darkly
             d3.select(this).attr("class","race-line-selected colorSelected");
 
-            // perform the brushing: highlight the element on the other
-            // plot
             return 0;
         }
 
@@ -608,6 +692,9 @@ window.onload = function() {
 
             // jQuery method of hiding the tooltip
             //$("#riderInfo").html("");
+
+            // remove the rider detailed info
+            $("#riderInfo").html("");
 
             // and remove the highlighting of the race line
             d3.select(this).attr("class","race-line color-unselected");
@@ -628,6 +715,7 @@ window.onload = function() {
             });
         });
 
+        /*
         juniorRaces.forEach(function(idx) {
             idx.values.forEach(function(innerIdx) {
                 g.append("svg:path")
@@ -650,8 +738,6 @@ window.onload = function() {
             });
         });
 
-
-        /*
         productionRaces.forEach(function(idx) {
             idx.values.forEach(function(innerIdx) {
                 g.append("path")
@@ -777,5 +863,11 @@ window.onload = function() {
 
 
     });
+
+
+
+
+
+
 
 }
