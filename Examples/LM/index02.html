@@ -61,10 +61,7 @@
 
 
     d3.csv("data.csv",function(csv) {
-        // we first sort the data
         csv.sort(function(a,b) {return b.population-a.population;});
-
-        // then we create the marks, which we put in an initial position
 
         svg.selectAll("circle").data(csv).enter()
                 .append("circle")
@@ -78,7 +75,6 @@
                 .append("title")
                 .text(function(d) {return d.country;})
 
-        // now we initiate - moving the marks to their position
 
         svg.selectAll("circle").transition().duration(1000)
                 .attr("cx",function(d) {return x(+d.GERD);})

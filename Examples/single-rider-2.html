@@ -320,11 +320,12 @@ d3.csv("races_data_custom_2.csv", function(error, data) {
     var superbikeRaces = d3.nest()
             .key(function(d) { return d.Rider1; })
             .entries(dataset, function(d) { return d.RaceClass === raceClasses["superbike"]; });
-
+      console.log(superbikeRaces);
     // just show the Superbike races per rider - each line will correspond to a
     // rider's performance placement year-over-year in the Superbike TT
     superbikeRaces.forEach(function(idx) {
         var j = idx.values;
+        console.log(idx);
         svg.append("path")
                 .datum( idx.values )
                 .attr("class", "race1")

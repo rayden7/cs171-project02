@@ -313,7 +313,7 @@ d3.csv("races_data.csv", function(error, data) {
             RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
         });
     });
-
+      console.log(data);
     // filter out all the Superbike races by rider
     var superbikeRaces = d3.nest()
             .key(function(d) { return d.Rider1; })
