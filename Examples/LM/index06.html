@@ -438,8 +438,20 @@ d3.csv("Data/races_data2.csv", function(error, data) {
             .call(scatterXAxis);
 
     var scatterScaley = d3.scale.linear()
-            .domain([0, d3.max(dataset2, function(d) { return +d.Position; }) + 1])
+//            .domain([0, d3.max(dataset2, function(d) { return +d.Position; }) + 1])
+///          .domain([d3.max(dataset2, function(d) { return +d.Position; }), 1])
+              .domain([5, 1])
+//           .range([h - padding, padding]);
             .range([h - padding, padding]);
+
+
+    var scatterScaley = d3.scale.linear()
+            .domain([5, 1])  // we only care about positions 1-5 for this chart
+            .range([h - padding, padding]);
+
+
+
+
     var scatterScaleR =  d3.scale.linear()
             .domain([5, 1
                 //d3.max(dataset2, function(d) { return d[1];

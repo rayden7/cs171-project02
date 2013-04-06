@@ -2,16 +2,56 @@
 #viz {
     border: 1px solid black;
     background-color: white;
-    width: 950px;
-    height: 525px;
-
-    width: 1400px;
-    height: 850px;
-
-    margin: 10px;
-    padding: 5px;
+    min-width: 1175px;
+    min-height: 750px;
+    width: 1200px;
+    height: 775px;
+    margin: 5px;
+    padding: 3px;
+    float: left;
+    border-radius: 0.9em;
+    -moz-border-radius: 0.9em;
+    -webkit-border-radius: 0.9em;
 }
 
+aside {
+    border: 1px solid black;
+    background: yellow;
+    margin: 5px;
+    padding: 3px;
+    width: 425px;
+    float: left;
+    border-radius: 0.9em;
+    -moz-border-radius: 0.9em;
+    -webkit-border-radius: 0.9em;
+}
+
+    #viz-filters {
+        min-height: 175px;
+        height: 200px;
+    }
+
+    #riderInfo {
+        margin-top: 0;
+        min-height: 450px;
+        height: 500px;
+    }
+
+    #viz-info {
+        border: 1px solid black;
+        background: pink;
+        min-width: 1100px;
+        min-height: 200px;
+        width: 1200px;
+        height: 250px;
+        margin: 5px;
+        padding: 3px;
+        float: left;
+        clear: both;
+        border-radius: 0.9em;
+        -moz-border-radius: 0.9em;
+        -webkit-border-radius: 0.9em;
+    }
 
 .axis path,
 .axis line {
@@ -38,17 +78,24 @@
     fill: none;
     stroke-width: 0.5px;
     stroke-width: 0.75px;
+    stroke-width: 1.0px;
 }
 
 .race-line-selected {
     fill: none;
     stroke-width: 1.5px;
     stroke-width: 2.5px;
+    stroke-width: 3.5px;
+    stroke-width: 5.0px;
 }
 
 .colorSelected { stroke: black; }
 
 /* see http://www.w3.org/TR/SVG/types.html#ColorKeywords for more color names */
+
+.color-unselected { stroke: #ccc; }
+
+
 .color1 { stroke: blue; }
 .color2 { stroke: blueviolet; }
 .color3 { stroke: brown; }
@@ -66,3 +113,22 @@
 .color13 { stroke: gray; }
 .color14 { stroke: indigo; }
 
+
+.race-line-tooltip {
+    font-size: 8pt;
+    border-radius: 0.9em;
+    -moz-border-radius: 0.9em;
+    -webkit-border-radius: 0.9em;
+    background: #ccc;
+    width: 350px;
+    height: 350px;
+    margin: 5px;
+    overflow: hidden;
+    position: absolute;
+    opacity : 0.65;
+}
+
+.race-line-tooltip ul {
+    margin-left: 10px;
+    padding: 10px;
+}

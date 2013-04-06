@@ -10,6 +10,8 @@
     <!-- local copy of minified D3 library -->
     <script src="js/d3.v3.min.js"></script>
 
+    <!-- local copy of minified jQuery library -->
+    <script src="js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
     <header>
@@ -27,13 +29,20 @@
 
     <article>
 
-        <aside>
+        <!-- this is where the primary visualization will be rendered -->
+        <div id="viz"></div>
+
+        <aside id="viz-filters">
+            <p>this is where the race class filters will go</p>
+        </aside>
+
+        <aside id="riderInfo">
             <p>this is the aside where individual detailed rider info will show up</p>
         </aside>
 
-        <div id="viz"></div>
-
-        <p>this is the main article, where the primary visualization will go</p>
+        <div id="viz-info">
+            <p>this is where we will put text explaining our visualization</p>
+        </div>
     </article>
 
     <footer>
