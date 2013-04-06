@@ -531,76 +531,8 @@ window.onload = function() {
 
 
 
-
-        // show the line graphs for each rider that has ever ridden in the TT Formula One races in any year
-
-        //.text(function(d, i) { return getTooltipText(d); });
-        // see:
-        // http://bl.ocks.org/natemiller/0c3659e0e6a0b77dabb0
-        // http://stackoverflow.com/questions/14823910/update-line-order-z-orientation-on-mouseover-in-d3
-
-/*
-see: http://stackoverflow.com/questions/13595175/updating-svg-element-z-index-with-d3#
-
-svg.selectAll("path")
-        .data(d)
-    .enter().append("path")
-        .attr("d", arc)
-        .attr("class", "arc")
-        .style("fill", function(d) { return color(d.name); })
-        .style("stroke", "#fff")
-        .style("stroke-width", 0)
-        .on("mouseover", function(d) {
-            svg.append("path")
-                .attr("d", d3.select(this).attr("d"))
-                .attr("id", "arcSelection")
-                .style("fill", "none")
-                .style("stroke", "#fff")
-                .style("stroke-width", 2);
-        })
-        .on("mouseout", function(d) {
-            d3.select("#arcSelection").remove();
-        });
-*/
-
-
-        function lineMouseOver(d, i) {
-
-            alert("moused over the line: d: ["+d+"]    i: ["+i+"]");
-            var con = d3.select("#" + args.c);
-            //var pos = $(con[0][0]).position();  // use jQuery to calculate the offsets of the tooltip
-            var mouse = d3.mouse(con[0][0]);
-            var info = con.selectAll("div.uservisioninfobox").data([mouse]);
-
-            var cushion = [10,10];
-            //this._xoff = cusion[0] + mouse[0] + pos.left;
-            //this._yoff = cusion[0] + mouse[1] + pos.top;
-            this._xoff = cusion[0] + mouse[0] ;
-            this._yoff = cusion[0] + mouse[1] ;
-            info.enter()
-                .append("div")
-                .attr("class", "uservisioninfobox")
-                .attr("style", "top" + this._yoff + "px; left: " + this._xoff + "px; opacity: 0")
-                .html("<p>x : " + dx + "</p>" +
-                      "<p>y : " + d.y + "</p>");
-
-            info.html("<p>x : " + dx + "</p>" + "<p>y : " + d.y + "</p>")
-                .transition().duration(250)
-                .attr("style", "top:"+this._yoff + "px; left: " + this._yoff + "px; opacity: 1");
-
-            d3.select(this)
-                .style("stroke-width", 8)
-                .style("stroke", "#000000")
-                .style("stroke-opacity", 0.3);
-
-            return 0;
-        }
-
-        function lineMouseOut() { }
-
-
-        function mouseover (d, i) {
-            ////var con = d3.select("#" + args.c);
+        // show a tooltip with rider information and highlight the racing line when mousing over one
+        function raceLineMouseOver (d, i) {
             var con = d3.select("#viz");
 
             // Since our information box is going to be appended into the
@@ -609,22 +541,12 @@ svg.selectAll("path")
 			// in the right place. It's easy to do this with jQuery
 			var pos = $(con[0][0]).position();
 
-            // d3.mouse returns the mouse coordinates relative to the spcified
+            // d3.mouse returns the mouse coordinates relative to the specified
             // container. Since we'll be appending the small infobox to the
             // overall visualization container, we want the mouse coordinates
             // relative to that.
-            //var mouse = d3.mouse(con[0][0]);
-            //var mouse = d3.mouse( $("#viz")[0]);
             var mouse = d3.mouse(con[0][0]);
-            console.log("$(\"#viz\")[0]: ["+$("#viz")[0]+"]");
-            console.log("mouse: ["+mouse+"]");
-            console.log("con: ["+con+"]  con[0][0]: ["+con[0][0]+"]");
-            console.log("pos: ["+pos+"]  pos.left: ["+pos.left+"]  pos.top: ["+pos.top+"]");
-
-            //var info = con.selectAll("div.uservisinfobox").data([mouse]);
             var info = con.selectAll("div.race-line-tooltip").data([mouse]);
-
-            console.log("info: ["+info+"]");
 
             // change the offset a little bit
             var cushion = [10, 10];
@@ -633,38 +555,20 @@ svg.selectAll("path")
             this._xoff = cushion[0] + mouse[0] + pos.left;
             this._yoff = cushion[1] + mouse[1] + pos.top;
 
-            console.log("new tooltip div positioning: xoff: ["+this._xoff+"]  yoff: ["+this._yoff+"]");
+            var riderInfoText = "<ul>\n";
+            riderInfoText += "<li><b>Rider:</b> "+d[0].Rider1+"</li>\n";
+            if (d[0].Rider2 !== null && d[0].Rider2.length > 0) {
+                riderInfoText += "<li><b>Second Rider:</b> "+d[0].Rider2+"</li>\n";
+            }
+            //riderInfoText += "<li><b>Rider ID:</b> "+d[0].RiderID+"</li>\n";
+            //riderInfoText += "<li><b>Race:</b> "+d[0].RaceName+"</li>\n";
+
+            riderInfoText += "<li><b>Race Class:</b> "+d[0].RaceClass.Class+"</li>\n";
 
             /*
-            console.log("RIDER INFO:\n" +
-              "d[0].RiderID: ["+d[0].RiderID+"]\n" +
-              "d[0].Rider1: ["+d[0].Rider1+"]\n" +
-              "d[0].Rider2: ["+d[0].Rider2+"]\n" +
-              "d[0].RaceName: ["+d[0].RaceName+"]\n" +
-              "d[0].RaceType: ["+d[0].RaceType+"]\n" +
-              "d[0].Year: ["+d[0].Year.getFullYear()+"]\n" +
-              "d[0].Position: ["+d[0].Position+"]\n" +
-              "d[0].BikeNumber: ["+d[0].BikeNumber+"]\n" +
-              "d[0].Machine: ["+d[0].Machine+"]\n" +
-              "d[0].Time: ["+d[0].Time+"]\n" +
-              "d[0].Speed: ["+d[0].Speed+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.Class+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.Laps+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.DistanceMiles+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.FastestLapRider+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.AverageSpeed+"]\n" +
-              "d[0].RaceClass: ["+d[0].RaceClass.Notes+"]\n"
-            );
-            */
-
-            var riderInfoText = "<ul>\n";
-            riderInfoText += "<li><b>RiderID:</b> "+d[0].RiderID+"</li>\n";
-            riderInfoText += "<li><b>Rider1:</b> "+d[0].Rider1+"</li>\n";
-            riderInfoText += "<li><b>Rider2:</b> "+d[0].Rider2+"</li>\n";
-            riderInfoText += "<li><b>RaceName:</b> "+d[0].RaceName+"</li>\n";
             riderInfoText += "<li><b>Year:</b> "+d[0].Year.getFullYear()+"</li>\n";
             riderInfoText += "<li><b>Race Position:</b> "+d[0].Position+"</li>\n";
-            riderInfoText += "<li><b>BikeNumber:</b> "+d[0].BikeNumber+"</li>\n";
+            riderInfoText += "<li><b>Bike Number:</b> "+d[0].BikeNumber+"</li>\n";
             riderInfoText += "<li><b>Machine:</b> "+d[0].Machine+"</li>\n";
             riderInfoText += "<li><b>Time:</b> "+d[0].Time+"</li>\n";
             riderInfoText += "<li><b>Speed:</b> "+d[0].Speed+"</li>\n";
@@ -676,156 +580,54 @@ svg.selectAll("path")
             riderInfoText += "<li><b>Fastest Lap Record:</b> "+d[0].RaceClass.FastestLapRider+"</li>\n";
             riderInfoText += "<li><b>Fastest Avg. Speed:</b> "+d[0].RaceClass.AverageSpeed+"</li>\n";
             riderInfoText += "<li><b>Race Info:</b> "+d[0].RaceClass.Notes+"</li>\n";
+             */
             riderInfoText += "</ul>\n";
 
             // jQuery method of showing the tooltip
             //$("#riderInfo").html(riderInfoText);
 
-
-             info.enter()
+            info.enter()
                 .append("div")
-                //.attr("class", "uservisinfobox")
-                //.attr("style", "top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0;")
-                //.attr("style", "top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0.75;")
-                //.attr("style", "position: relative; top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0.75;")
                 .attr("class","race-line-tooltip")
-                //.attr("style", "position: absolute; top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0.75;")
-                 .attr("style", "top: " + this._yoff + "px; left: " + this._xoff + "px;")
+                .attr("style", "top: " + this._yoff + "px; left: " + this._xoff + "px;")
                 .html(riderInfoText);
 
-
-            /*
-            info.enter()
-            //.append("div")
-            .append("aside#riderInfo")
-			//.append("#viz")  // invalid
-            //.append("div#viz") // invalid
-			.attr("class", "uservisinfobox")
-			.attr("style", "top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0;")
-            //.html("<p>x : " + d.x + "</p><p>y : " + d3.round(d.y, 2) + "</p>");
-            //.html("<p>rider races and info goes here</p>");
-			.html(riderInfoText);
-			*/
-
-            /*
-            info.html("<p>x : " + d.x + "</p><p>y : " + d3.round(d.y, 2) + "</p>")
-            info
-            //.html("<p>rider races and info goes here</p>")
-            .html(riderInfoText)
-            //.transition().duration(250)
-			.transition().duration(125)
-			.attr("style", "top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 1;");
-			// highlight the graphical element itself
-			// highlight data
-            */
-
-            /*
-            var names = ['deriv', 'points'];
-            var high = [];
-            for (var ii = 0; ii < names.length; ii++) {
-                for (var jj = 0; jj < data[names[ii]].length; jj++) {
-                    var tmp = data[names[ii]][jj];
-                    if (tmp.x == d.x) {
-                        tmp.name = names[ii];
-                        high.push(tmp);
-                    }
-                }
-            }
-            */
-		  
-            /*
-            // now that we have highlighting data, do the highlighting
-            d3.selectAll('#' + args.c + ' circle')
-			    .data(high, function (d, i) { return d.name + d.x;})
-			    .style("stroke-width", 8)
-			    .style("stroke", "#000000")
-			    .style("fill", "#ff0000")
-			    .style("stroke-opacity", 0.3);
-			*/
-
+            // highlight the race line by making it have a thicker line stroke and color it darkly
             d3.select(this).attr("class","race-line-selected colorSelected");
 
-		  // perform the brushing: highlight the element on the other 
-		  // plot
-		  return 0;
+            // perform the brushing: highlight the element on the other
+            // plot
+            return 0;
         }
 
-        function mouseout (d, i) {
-            /*
-            // smoothly remove the infobox
-            d3.selectAll(".uservisinfobox")
-                .transition().duration(250)
-                .attr("style", "top : " + this._yoff + "px; " + "left : " + this._xoff + "px; opacity : 0;")
-                .remove();
-            */
-
-            // smoothly remove the infobox
-            //d3.selectAll(".uservisinfobox")
-            d3.selectAll(".race-line-tooltip")
-                //.transition().duration(125)
-                //.attr("style", "top : " + this._yoff + "px; " + "left : " + this._xoff + "px; opacity : 0;")
-                //.attr("style", "position: absolute; top : " + this._yoff + "px; left : " + this._xoff + "px; opacity : 0;")
-                .remove();
-
+        // remove the tooltip and drop the race line highlighting on mouseout
+        function raceLineMouseOut (d, i) {
+            // quickly remove the rider info tooltip; don't want to do a transition because the user will most likely
+            // be mousing over/out of several lines at once since the primary visualization has a ton of race lines
+            d3.selectAll(".race-line-tooltip").remove();
 
             // jQuery method of hiding the tooltip
             //$("#riderInfo").html("");
 
-            /*
-            // clean up the element highlighting
-            d3.selectAll('#' + args.c + ' circle')
-                .style("stroke-width", 0)
-                .style("stroke", function (d) { return d.col; })
-                .style("fill", function (d) { return d.col; })
-                .style("stroke-opacity", function (d) { return d.alpha; });
-            */
-
+            // and remove the highlighting of the race line
             d3.select(this).attr("class","race-line color-unselected");
-
             return 0;
 		}
 
+        // show the line graphs for each rider that has ever ridden in the TT Formula One races in any year
 
         formulaoneRaces.forEach(function(idx) {
             idx.values.forEach(function(innerIdx) {
                 //svg.append("path")
                 g.append("svg:path")
                     .datum( innerIdx.values )
-                    //.attr("class", "race-line color1")
                     .attr("class", "race-line color-unselected")
                     .attr("d", lineClosed)
-                    //.on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    ////.on("mouseout", function(d) { d3.select(this).attr("class","race-line color1"); });
-                    //.on("mouseout", function(d) { d3.select(this).attr("class","race-line color-unselected"); });
-
-                    //.on("mouseover", lineMouseOver )
-                    //.on("mouseout", lineMouseOut );
-
-                    .on("mouseover", mouseover )
-                    .on("mouseout", mouseout );
-
-                /*
-                .on("mouseover", function(d) {
-                    //g.append("svg:path")
-                    svg.append("path")
-                        .datum( innerIdx.values )
-                        //.attr("d", d3.select(this).attr("d"))
-                        .attr("id", "arcSelection")
-                        .attr("class","race-line-selected colorSelected")
-                        //.style("fill", "none")
-                        //.style("stroke", "#fff")
-                        //.style("stroke-width", 2);
-                })
-                    .on("mouseout", function(d) {
-                        d3.select("#arcSelection").remove();
-                    });
-                    */
-
-
+                    .on("mouseover", raceLineMouseOver )
+                    .on("mouseout", raceLineMouseOut );
             });
         });
 
-        /*
         juniorRaces.forEach(function(idx) {
             idx.values.forEach(function(innerIdx) {
                 g.append("svg:path")
@@ -848,6 +650,8 @@ svg.selectAll("path")
             });
         });
 
+
+        /*
         productionRaces.forEach(function(idx) {
             idx.values.forEach(function(innerIdx) {
                 g.append("path")
