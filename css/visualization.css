@@ -42,6 +42,7 @@
 
 
 #viz svg {
+    /*background-color: purple;*/
     float: left;
     clear: both;
     margin: 0;

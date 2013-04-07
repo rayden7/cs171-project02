@@ -209,7 +209,10 @@ var margin2 = {
                 left:   (margin.left / 3)
     },
     width2 = ((width / 3) - margin2.left - margin2.right),
-    height2 = (175 - margin2.top - margin2.bottom);
+    //height2 = (175 - margin2.top - margin2.bottom);
+    //height2 = (195 - margin2.top - margin2.bottom);
+    //height2 = (175);
+    height2 = (175);
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 //var svg2 = d3.select("#viz").append("svg")
@@ -536,47 +539,22 @@ window.onload = function() {
 
 function drawRiderDetailGraphs(d, i) {
 
-    var RiderDNF = 0;
-
-    //alert("drawing rider detail graphs for rider...");
-    var w = 500;
-    //var w = 525;
-    //var h = 200;
-    var h = 175;
-    //var h = 150;
-    //var barPadding = 1;  // <-- New!
     var padding = 30;
-    //var padding = 20;
-    //var padding = 15;
-
-
-    var extent = d3.extent(d, function(d){ return d.Year; });
-    var yearMin = d3.min(d, function(d){ return d.Year; }) - 1;
-    var yearMax = d3.max(d, function(d){ return d.Year; }) + 1;
+    var w = width2 - padding;
+    var h = height2;
 
     // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
     var lineScalex = d3.time.scale()
-                        //.domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })])
-                        //.domain([d3.extent(d, function(d){ return d.Year; })] )
-
-                        //.domain( d3.extent(d, function(d){ return d.Year; }) )
-                        .domain( [yearMin, yearMax] )
-
-                        //.domain([d3.min(d, function(d){ return d.Year; })-1, d3.max(d, function(d){ return d.Year; })+1] )
-                        //.domain([d3.min(d, function(d){ return d.Year-1; }), d3.max(d, function(d){ return d.Year+1; })] )
-                        //.domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
-                        .range([padding, w - padding * 2]);
-
+                        .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+                        .range([padding, w ]);
 
     var xDomain = d3.extent(d, function(d){ return d.Year; });
-
 
     var lineXAxis = d3.svg.axis()
                         .scale(lineScalex)
                         .orient("bottom");
 
     var lineScaley = d3.scale.linear()
-                        //.domain([0, d3.max(d, function(d) { return +d.values.Speed; }) + 1])
                         .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
                         .range([h - padding, padding]);
 
@@ -584,7 +562,6 @@ function drawRiderDetailGraphs(d, i) {
                         .scale(lineScaley)
                         .orient("left")
                         .ticks(5);
-
 
     var line2 = d3.svg.line()
                         .x(function(d) { return lineScalex(d.Year); })
@@ -595,9 +572,7 @@ function drawRiderDetailGraphs(d, i) {
             .attr("transform", "translate(0," + (h - padding) + ")")
             .call(lineXAxis)
             .append("text")
-            .attr("x", w / 3)
-            //.attr("y", 15)
-            //.attr("y", 35)
+            .attr("x", w / 2)
             .attr("y", 30)
             .style("text-anchor", "end")
             .text("Year");
@@ -612,8 +587,10 @@ function drawRiderDetailGraphs(d, i) {
             .attr("x", -(h/3)*2)
             .text("Avg. Speed");
 
-
-
+        svg2.append("path")
+            .datum( d )
+            .attr("class", "race-line")
+            .attr("d", line2);
 
 
 }
