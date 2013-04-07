@@ -8,6 +8,194 @@ Team Members:
     Leo Mejia <kolopaisa@gmail.com>
 */
 
+
+// save the races dataset here, so that we can refer to it outside of the loading function
+// (because d3.csv file loading is asynchronous and can cause the browser to hang when loading large files),
+// and also so we can massage the data as it is loaded from the races_data.csv into the JavaScript datatypes
+// we want to use (int, Date, etc.)
+var dataset = [];
+
+// for the same reason as we had for the dataset, save the rider information here (from rider-data.csv)
+var riderDataset = [];
+
+/*
+ information on race classes, laps/miles, etc. comes from:
+
+ http://www.iomguide.com/ttproduction.php
+ http://www.iomguide.com/races/tt/tt-results.php
+ http://www.iomguide.com/races/tt/tt-results.php?race=666
+ http://www.iomtt.com/TT-2013.aspx
+ http://www.iomtt.com/TT-2013/Practice-and-Race-Schedule.aspx
+ http://www.iomtt.com/TT-2013/2012-TT-Results.aspx
+ http://cdn.iomtt.com/~/media/Files/2012/Results/Championship-Standings/JoeyDunlopTrophyfinal.ashx
+ */
+var raceClasses = {
+    // http://www.iomguide.com/ttformulaone.php
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT04&race_seq=1
+    formulaone       : {
+        Class:"TT Formula One",
+        Laps:4,
+        DistanceMiles:150.92,
+        FastestLapRider:"John McGuinness",
+        AverageSpeed:125.38,
+        Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Formula One Motorcycle Races was started in 1977. It use to covers 226.38 miles/364.2 km over 6 laps on the Mountain Circuit, but as of 2004 it changed to 4 laps."
+    },
+    // http://www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2009&race_seq=4
+    // http://www.iomguide.com/ttjunior.php
+    junior           : {
+        Class:"TT Junior / Supersport TT",
+        Laps:4,
+        DistanceMiles:150.92,
+        FastestLapRider:"Ian Hutchinson",
+        AverageSpeed:124.141,
+        Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Junior 600 and TT 250 Motorcycle Races covers 150.92 miles/ 242.8 km over 4 laps on the Mountain Circuit. The Junior Races are on Wednesday morning."
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/Fast%20times%20-%20Lightweight%2026.5.ashx
+    // http://www.iomguide.com/ttlightweight.php
+    lightweight      : {
+        Class:"TT Lightweight",
+        Laps:4,
+        DistanceMiles:150.92,
+        FastestLapRider:"Ryan Farquhar",
+        AverageSpeed:113.587,
+        Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Lightweight 400 and Ultra Lightweight 125 Motorcycle Races cover 150.92 miles/242.8 km over 4 laps on the Mountain Circuit. The Lightweight and Ultra Lightweight races are on Monday."
+    },
+    // http://www.iomguide.com/ttproduction.php
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT04&race_seq=5
+    production       : {
+        Class:"TT International Production 1000",
+        Laps:3,
+        DistanceMiles:113.19,
+        FastestLapRider:"Bruce Anstey",
+        AverageSpeed:123.72,
+        Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Production 600 and 1000 Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Production 1000 race is on Monday and the Production 600 race on Friday."
+    },
+    // http://www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
+    // http://www.iomguide.com/races/tt/senior-tt.php
+    senior           : {
+        Class:"Senior TT",
+        Laps:6,
+        DistanceMiles:226.38,
+        FastestLapRider:"John McGuiness",
+        AverageSpeed:128.078,
+        Notes: "A new race from 2005 with any machine eligible from TT Superbike, TT Superstock or Supersport Junior TT."
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/Sidecar%20Fast%20times%20-%2026.5.ashx
+    // http://www.iomguide.com/sidecarraces.php
+    sidecara         : {
+        Class:"TT Sidecar Race A",
+        Laps:3,
+        DistanceMiles:113.19,
+        FastestLapRider:"Dave Molyneux & Patrick Farrance",
+        AverageSpeed:110.831,
+        Notes: "The TT Sidecar Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Sidecar A race is on Saturday followed by the Sidecar B on Wednesday and are made up of ACU Formula 2 Sidecars."
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/Sidecar%20Fast%20times%20-%2026.5.ashx
+    // http://www.iomguide.com/sidecarraces.php
+    sidecarb          : {
+        Class:"TT Sidecar Race B",
+        Laps:3,
+        DistanceMiles:113.19,
+        FastestLapRider:"Dave Molyneux & Patrick Farrance",
+        AverageSpeed:110.831,
+        Notes: "The TT Sidecar Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Sidecar A race is on Saturday followed by the Sidecar B on Wednesday and are made up of ACU Formula 2 Sidecars."
+    },
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT00&race_seq=7
+    // http://en.wikipedia.org/wiki/2000_Isle_of_Man_TT
+    singles          : {
+        Class:"TT Singles",
+        Laps:4,
+        DistanceMiles:150.92,
+        FastestLapRider:"John McGuinness",
+        AverageSpeed:109.63,
+        Notes: ""
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/020612/Superbike/Superbike%20-%20Lap%20by%20lap%20-%202.6.ashx
+    // http://www.iomguide.com/races/tt/tt-superbike.php
+    superbike        : {
+        Class:"TT Superbike",
+        Laps:6,
+        DistanceMiles:226.38,
+        FastestLapRider:"Cameron Donald",
+        AverageSpeed:130.258,
+        Notes: "A new race from 2005 with machines complying with World Superbike and/or British Superbike specifications:\n\nOver 750cc up to 1000cc 4 cylinders\nOver 750cc up to 1000cc 3 cylinders\nOver 800cc up to 1000cc 2 cylinders"
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/060612/Lap%20by%20lap-Supersport%202.ashx
+    // http://www.iomguide.com/races/tt/supersport-junior-tt.php
+    supersporta       : {
+        Class:"TT Supersport Race A",
+        Laps:6,
+        DistanceMiles:226.38,
+        FastestLapRider:"Michael Dunlop",
+        AverageSpeed:124.391,
+        Notes: "A new race from 2005 with machines complying with FIM Supersport or MCRCB Supersport specifications:\n\nOver 400cc up to 600cc 4 cylinders\nOver 600cc up to 750cc 2 cylinders"
+    },
+    // http://cdn.iomtt.com/~/media/Files/2012/Results/060612/Lap%20by%20lap-Supersport%202.ashx
+    // http://www.iomguide.com/races/tt/supersport-junior-tt.php
+    supersportb       : {
+        Class:"TT Supersport Race B",
+        Laps:6,
+        DistanceMiles:226.38,
+        FastestLapRider:"Michael Dunlop",
+        AverageSpeed:124.391,
+        Notes: "A new race from 2005 with machines complying with FIM Supersport or MCRCB Supersport specifications:\n\nOver 400cc up to 600cc 4 cylinders\nOver 600cc up to 750cc 2 cylinders"
+    },
+    // http://www.iomguide.com/races/tt/tt-superstock.php
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2012&race_seq=4
+    superstock       : {
+        Class:"TT Superstock",
+        Laps:4,
+        DistanceMiles:150.8,
+        FastestLapRider:"John McGuinness",
+        AverageSpeed:126.657,
+        Notes: "A new race from 2005 with machines complying with FIM Superstock and/or UEM Stocksport and/or MCRCB Stocksport specifications:\n\nOver 600cc up to 1000cc 4 cylinders\nOver 750cc up to 1000cc 3 cylinders\nOver 850cc up to 1200cc 2 cylinders"
+    },
+    // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2009&race_seq=10
+    // http://www.iomtt.com/News/2009/04/20/Increased-interest-in-Lightweight-and-Ultra-Lightweight-TT-Races.aspx
+    // http://www.iomguide.com/ttlightweight.php
+    ultralightweight : {
+        Class:"TT Ultra Lightweight 125",
+        Laps:4,
+        DistanceMiles:150.92,
+        FastestLapRider:"Ian Lougher",
+        AverageSpeed:94.911,
+        Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Lightweight 400 and Ultra Lightweight 125 Motorcycle Races cover 150.92 miles/242.8 km over 4 laps on the Mountain Circuit. The Lightweight and Ultra Lightweight races are on Monday."
+    },
+    // http://www.iomtt.com/TT-2013/TT-Zero.aspx
+    // http://www.iomguide.com/races/tt/ttxgp.php
+    // www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
+    zero             : {
+        Class:"TTXGP",
+        Laps:1,
+        DistanceMiles:37.7,
+        FastestLapRider:"Michael Rutter",
+        AverageSpeed:104.056,
+        Notes: "The world's first clean emmissions race for motorcycles. The first one lap race is due to take place on June 12, 2009."
+    }
+};
+
+
+
+
+var margin = {top: 20, right: 20, bottom: 50, left: 50},
+    width = 1150 - margin.left - margin.right,
+    height = 750 - margin.top - margin.bottom;
+
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var g = d3.select("g");
+
+
+
+
+
+// execute the CSV load and generate the graph once the window has loaded
 window.onload = function() {
 
     var margin = {top: 20, right: 20, bottom: 50, left: 50},
@@ -72,183 +260,8 @@ window.onload = function() {
         .y(function(d) { return y(d.Position); })
         .defined(function(d){ return (d.x !== null && d.y !== null); });
 
-    var svg = d3.select("#viz").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var g = d3.select("g");
-
-    // save the dataset here, so that we can refer to it outside of the loading function
-    // (because d3.csv file loading is asynchronous and can cause the browser to hang when loading large files),
-    // and also so we can massage the data as it is loaded from the CSV into the JavaScript datatypes we want to use
-    // (int, Date, etc.)
-    var dataset = [];
-
-    // save all the individual rider info here
-    var riderDataset = [];
-
-
 // TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
 
-
-    /*
-     information on race classes, laps/miles, etc. comes from:
-
-     http://www.iomguide.com/ttproduction.php
-     http://www.iomguide.com/races/tt/tt-results.php
-     http://www.iomguide.com/races/tt/tt-results.php?race=666
-     http://www.iomtt.com/TT-2013.aspx
-     http://www.iomtt.com/TT-2013/Practice-and-Race-Schedule.aspx
-     http://www.iomtt.com/TT-2013/2012-TT-Results.aspx
-     http://cdn.iomtt.com/~/media/Files/2012/Results/Championship-Standings/JoeyDunlopTrophyfinal.ashx
-     */
-    var raceClasses = {
-        // http://www.iomguide.com/ttformulaone.php
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT04&race_seq=1
-        formulaone       : {
-            Class:"TT Formula One",
-            Laps:4,
-            DistanceMiles:150.92,
-            FastestLapRider:"John McGuinness",
-            AverageSpeed:125.38,
-            Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Formula One Motorcycle Races was started in 1977. It use to covers 226.38 miles/364.2 km over 6 laps on the Mountain Circuit, but as of 2004 it changed to 4 laps."
-        },
-        // http://www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2009&race_seq=4
-        // http://www.iomguide.com/ttjunior.php
-        junior           : {
-            Class:"TT Junior / Supersport TT",
-            Laps:4,
-            DistanceMiles:150.92,
-            FastestLapRider:"Ian Hutchinson",
-            AverageSpeed:124.141,
-            Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Junior 600 and TT 250 Motorcycle Races covers 150.92 miles/ 242.8 km over 4 laps on the Mountain Circuit. The Junior Races are on Wednesday morning."
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/Fast%20times%20-%20Lightweight%2026.5.ashx
-        // http://www.iomguide.com/ttlightweight.php
-        lightweight      : {
-            Class:"TT Lightweight",
-            Laps:4,
-            DistanceMiles:150.92,
-            FastestLapRider:"Ryan Farquhar",
-            AverageSpeed:113.587,
-            Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Lightweight 400 and Ultra Lightweight 125 Motorcycle Races cover 150.92 miles/242.8 km over 4 laps on the Mountain Circuit. The Lightweight and Ultra Lightweight races are on Monday."
-        },
-        // http://www.iomguide.com/ttproduction.php
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT04&race_seq=5
-        production       : {
-            Class:"TT International Production 1000",
-            Laps:3,
-            DistanceMiles:113.19,
-            FastestLapRider:"Bruce Anstey",
-            AverageSpeed:123.72,
-            Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Production 600 and 1000 Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Production 1000 race is on Monday and the Production 600 race on Friday."
-        },
-        // http://www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
-        // http://www.iomguide.com/races/tt/senior-tt.php
-        senior           : {
-            Class:"Senior TT",
-            Laps:6,
-            DistanceMiles:226.38,
-            FastestLapRider:"John McGuiness",
-            AverageSpeed:128.078,
-            Notes: "A new race from 2005 with any machine eligible from TT Superbike, TT Superstock or Supersport Junior TT."
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/Sidecar%20Fast%20times%20-%2026.5.ashx
-        // http://www.iomguide.com/sidecarraces.php
-        sidecara         : {
-            Class:"TT Sidecar Race A",
-            Laps:3,
-            DistanceMiles:113.19,
-            FastestLapRider:"Dave Molyneux & Patrick Farrance",
-            AverageSpeed:110.831,
-            Notes: "The TT Sidecar Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Sidecar A race is on Saturday followed by the Sidecar B on Wednesday and are made up of ACU Formula 2 Sidecars."
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/Sidecar%20Fast%20times%20-%2026.5.ashx
-        // http://www.iomguide.com/sidecarraces.php
-        sidecarb          : {
-            Class:"TT Sidecar Race B",
-            Laps:3,
-            DistanceMiles:113.19,
-            FastestLapRider:"Dave Molyneux & Patrick Farrance",
-            AverageSpeed:110.831,
-            Notes: "The TT Sidecar Motorcycle Races cover 113.19 miles/182.1 km over 3 laps on the Mountain Circuit. The Sidecar A race is on Saturday followed by the Sidecar B on Wednesday and are made up of ACU Formula 2 Sidecars."
-        },
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT00&race_seq=7
-        // http://en.wikipedia.org/wiki/2000_Isle_of_Man_TT
-        singles          : {
-            Class:"TT Singles",
-            Laps:4,
-            DistanceMiles:150.92,
-            FastestLapRider:"John McGuinness",
-            AverageSpeed:109.63,
-            Notes: ""
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/020612/Superbike/Superbike%20-%20Lap%20by%20lap%20-%202.6.ashx
-        // http://www.iomguide.com/races/tt/tt-superbike.php
-        superbike        : {
-            Class:"TT Superbike",
-            Laps:6,
-            DistanceMiles:226.38,
-            FastestLapRider:"Cameron Donald",
-            AverageSpeed:130.258,
-            Notes: "A new race from 2005 with machines complying with World Superbike and/or British Superbike specifications:\n\nOver 750cc up to 1000cc 4 cylinders\nOver 750cc up to 1000cc 3 cylinders\nOver 800cc up to 1000cc 2 cylinders"
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/060612/Lap%20by%20lap-Supersport%202.ashx
-        // http://www.iomguide.com/races/tt/supersport-junior-tt.php
-        supersporta       : {
-            Class:"TT Supersport Race A",
-            Laps:6,
-            DistanceMiles:226.38,
-            FastestLapRider:"Michael Dunlop",
-            AverageSpeed:124.391,
-            Notes: "A new race from 2005 with machines complying with FIM Supersport or MCRCB Supersport specifications:\n\nOver 400cc up to 600cc 4 cylinders\nOver 600cc up to 750cc 2 cylinders"
-        },
-        // http://cdn.iomtt.com/~/media/Files/2012/Results/060612/Lap%20by%20lap-Supersport%202.ashx
-        // http://www.iomguide.com/races/tt/supersport-junior-tt.php
-        supersportb       : {
-            Class:"TT Supersport Race B",
-            Laps:6,
-            DistanceMiles:226.38,
-            FastestLapRider:"Michael Dunlop",
-            AverageSpeed:124.391,
-            Notes: "A new race from 2005 with machines complying with FIM Supersport or MCRCB Supersport specifications:\n\nOver 400cc up to 600cc 4 cylinders\nOver 600cc up to 750cc 2 cylinders"
-        },
-        // http://www.iomguide.com/races/tt/tt-superstock.php
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2012&race_seq=4
-        superstock       : {
-            Class:"TT Superstock",
-            Laps:4,
-            DistanceMiles:150.8,
-            FastestLapRider:"John McGuinness",
-            AverageSpeed:126.657,
-            Notes: "A new race from 2005 with machines complying with FIM Superstock and/or UEM Stocksport and/or MCRCB Stocksport specifications:\n\nOver 600cc up to 1000cc 4 cylinders\nOver 750cc up to 1000cc 3 cylinders\nOver 850cc up to 1200cc 2 cylinders"
-        },
-        // http://www.iomtt.com/TT-Database/Events/Races.aspx?meet_code=TT2009&race_seq=10
-        // http://www.iomtt.com/News/2009/04/20/Increased-interest-in-Lightweight-and-Ultra-Lightweight-TT-Races.aspx
-        // http://www.iomguide.com/ttlightweight.php
-        ultralightweight : {
-            Class:"TT Ultra Lightweight 125",
-            Laps:4,
-            DistanceMiles:150.92,
-            FastestLapRider:"Ian Lougher",
-            AverageSpeed:94.911,
-            Notes: "The TT Races is part of the TT Festival covering two weeks from the end of May to the beginning of June. The first week consists of practice racing with the second week being the main racing event. The TT (Tourist Trophy) Lightweight 400 and Ultra Lightweight 125 Motorcycle Races cover 150.92 miles/242.8 km over 4 laps on the Mountain Circuit. The Lightweight and Ultra Lightweight races are on Monday."
-        },
-        // http://www.iomtt.com/TT-2013/TT-Zero.aspx
-        // http://www.iomguide.com/races/tt/ttxgp.php
-        // www.iomtt.com/TT-Database/TT-Records/Race-Records.aspx
-        zero             : {
-            Class:"TTXGP",
-            Laps:1,
-            DistanceMiles:37.7,
-            FastestLapRider:"Michael Rutter",
-            AverageSpeed:104.056,
-            Notes: "The world's first clean emmissions race for motorcycles. The first one lap race is due to take place on June 12, 2009."
-        }
-    };
 
     function getRaceClass(raceName) {
         for (var raceKey in raceClasses) {
@@ -265,45 +278,6 @@ window.onload = function() {
         }
         return null;  // race class not found
     }
-
-    function getTooltipText(d) {
-        var text = "";
-
-        /*
-         if (d.RaceName !== null && d.RaceName.length > 0)
-         text += "<b>Race: </b>" + d.RaceName + "<br>";
-         if (d.Rider1 !== null && d.Rider1.length > 0 && (d.Rider2 === null || d.Rider2.length == 0))
-         text += "<b>Rider: </b>" + d.Rider1 + "<br>";
-         if (d.Rider1 !== null && d.Rider1.length > 0 && d.Rider2 !== null && d.Rider2.length > 0)
-         text += "<b>Riders: </b>" + d.Rider1 + " & " + d.Rider2 + "<br>";
-         if (d.Year !== null && (typeof(d.Year) === Date) && d.Year.getFullYear() >= 1)
-         text += "<b>Year: </b>" + d.Year.getFullYear().toString() + "<br>";
-         if (d.Position !== null && d.Position > 0) {
-         var posText = (d.Position == 72) ? "DNF" : d.Position;
-         text += "<b>Race Position: </b>" + posText + "<br>";
-         }
-         if (d.Machine !== null && d.Machine.length > 0)
-         text += "<b>Machine: </b>" + d.Machine + "<br>";
-         */
-
-        if (d[0].RaceClass.Class !== null && d[0].RaceClass.Class.length > 0)
-            text += "<b>Race Class: </b>" + d[0].RaceClass.Class + "<br>";
-        if (d[0].Rider1 !== null && d[0].Rider1.length > 0 && (d[0].Rider2 === null || d[0].Rider2.length == 0))
-            text += "<b>Rider: </b>" + d[0].Rider1 + "<br>";
-        if (d[0].Rider1 !== null && d[0].Rider1.length > 0 && d[0].Rider2 !== null && d[0].Rider2.length > 0)
-            text += "<b>Riders: </b>" + d[0].Rider1 + " & " + d[0].Rider2 + "<br>";
-        //if (d[].Year !== null && (typeof(d.Year) === Date) && d.Year.getFullYear() >= 1)
-        //    text += "<b>Year: </b>" + d.Year.getFullYear().toString() + "<br>";
-        //if (d.Position !== null && d.Position > 0) {
-        //    var posText = (d.Position == 72) ? "DNF" : d.Position;
-        //    text += "<b>Race Position: </b>" + posText + "<br>";
-        //}
-        //if (d.Machine !== null && d.Machine.length > 0)
-        //    text += "<b>Machine: </b>" + d.Machine + "<br>";
-
-        return text;
-    }
-
 
     /*
      * Because the different race names have overlaps (e.g., there are often several races of a given class in a
@@ -332,8 +306,6 @@ window.onload = function() {
         "TT 2009 Motorsport Merchandise Lightweight 250 TT #2 Results",
         "TT 2009 Motorsport Merchandise Ultra Lightweight 125 TT #2 Results"
     ];
-
-
 
 
     // load in the CSV of all the rider information data
@@ -365,13 +337,8 @@ window.onload = function() {
                 TTCareerSummaryPositionDNF: +d.TTCareerSummaryPositionDNF
             });
         });
-
-        console.log("riderDataset.length: " +riderDataset.length);
+        //console.log("riderDataset.length: " +riderDataset.length);
     });
-
-
-
-
 
 
     // load in the CSV of all the races data
@@ -503,371 +470,210 @@ window.onload = function() {
         yAxis.ticks(dnfPlace);
 
 
-        // filter out each race and group them first by unique rider, then by race type, and finally,
-        // restrict the dataset to be only for that specified RaceClass
-        var formulaoneRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
-            .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["formulaone"]; }) );
-            //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["formulaone"] && d.RiderID === 4917; }) ); // test on Allan Warner
+        redrawRaceLines();
 
-        var juniorRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["junior"]; }) );
-
-        var lightweightRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["lightweight"]; }) );
-
-        var productionRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["production"]; }) );
-
-        var seniorRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["senior"]; }) );
-
-        var sidecaraRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["sidecara"]; }) );
-
-        var sidecarbRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["sidecarb"]; }) );
-
-        var singlesRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["singles"]; }) );
-
-        var superbikeRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["superbike"]; }) );
-
-        var supersportaRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["supersporta"]; }) );
-
-        var supersportbRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["supersportb"]; }) );
-
-        var superstockRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["superstock"]; }) );
-
-        var ultralightweightRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["ultralightweight"]; }) );
-
-        var zeroRaces = d3.nest()
-            .key(function(d) { return d.Rider1; })
-            .key(function(d) { return d.RaceType; })
-            .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses["zero"]; }) );
+        // use this as a test to ensure that we can clear all of the lines on the graph and re-draw them by calling
+        // the redrawRaceLines() function; this will allow us to filter out the dataset array and then call
+        // redrawRaceLines again to filter out race classes
+        //window.setTimeout(function(){ redrawRaceLines(); }, 3000);
 
 
+        // build out the primary race lines visualization by looping over all the race classes, filtering out each
+        // class by rider and race type, and then draw all the race lines for the given class
+        function redrawRaceLines() {
 
-        // show a tooltip with rider information and highlight the racing line when mousing over one
-        function raceLineMouseOver (d, i) {
-            var con = d3.select("#viz");
+            // start by clearing all race lines from the graph in case any are present
+            d3.selectAll("path").remove();
 
-            // Since our information box is going to be appended into the
-			// overall visualization container, we need to find out its position
-			// on the screen so that the absolutely positioned infobox shows up 
-			// in the right place. It's easy to do this with jQuery
-			var pos = $(con[0][0]).position();
+            // loop over each of the raceClasses, filter the dataset to get just riders in each class,
+            // then draw all the race lines for the specified class
+            for (var raceClass in raceClasses) {
 
-            // d3.mouse returns the mouse coordinates relative to the specified
-            // container. Since we'll be appending the small infobox to the
-            // overall visualization container, we want the mouse coordinates
-            // relative to that.
-            var mouse = d3.mouse(con[0][0]);
-            var info = con.selectAll("div.race-line-tooltip").data([mouse]);
+                //console.log("current race class: ["+raceClass+"]");
 
-            // change the offset a little bit
-            var cushion = [10, 10];
-            // record the offset as part of the 'this' context, which in this
-            // case stands for the circle that initiated the mouseover event
-            this._xoff = cushion[0] + mouse[0] + pos.left;
-            this._yoff = cushion[1] + mouse[1] + pos.top;
+                // filter out each race and group them first by unique rider, then by race type, and finally,
+                // restrict the dataset to be only for that specified RaceClass
+                var raceClassRecords = d3.nest()
+                    .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
+                    .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
+                    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
 
-            // try to find information in riderDataset on this particular rider based on the RiderID value
-            var curRiderID = d[0].RiderID;
-            var riderInfo = riderDataset.filter(function(d) { return d.RiderID === curRiderID; });
-
-            // if we found the rider info in the riderDataset, build out the ASIDE detailed info on the rider
-            if ( riderInfo !== null && riderInfo.length === 1) {
-                var riderInfoHTML = "<h2><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+"</a></h2>\n";
-                riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+" TT Database</a></p><br />\n";
-
-                // clean and show the rider biography
-                var bio = riderInfo[0].Biography;
-                if (bio !== null && bio.length > 0) {
-                    // if we find any occurrences of two successive single quotes, replace them with one single quote
-                    bio = bio.replace(/""+/ig, '"');
-                    // update the IOMTT database website relative path for any inline images to use the
-                    // fully-qualified URL to the images
-                    bio = bio.replace(/\/images\/cache/ig, 'http://www.iomtt.com/images/cache');
-                    riderInfoHTML += "<p>"+bio+"</p>\n";
-                }
-
-                // show any rider pictures we found
-                if (
-                       //(riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) ||
-                       (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) ||
-                       (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0)
-                ) {
-                    riderInfoHTML += "<hr />\n";
-                    //if (riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) {
-                    //    riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture1+"\" title=\""+riderInfo[0].RiderName+"\ picture 1\" />\n";
-                    //}
-                    if (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) {
-                        riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture2+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
-                    }
-                    if (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0) {
-                        riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture3+"\" title=\""+riderInfo[0].RiderName+"\ picture 3\" />\n";
-                    }
-                }
-
-                // determine if we have non-zero values for career TT race placement in positions 1-10, or DNF occurrences
-                var occ1   = (isNaN(riderInfo[0].TTCareerSummaryPosition1))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition1);
-                var occ2   = (isNaN(riderInfo[0].TTCareerSummaryPosition2))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition2);
-                var occ3   = (isNaN(riderInfo[0].TTCareerSummaryPosition3))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition3);
-                var occ4   = (isNaN(riderInfo[0].TTCareerSummaryPosition4))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition4);
-                var occ5   = (isNaN(riderInfo[0].TTCareerSummaryPosition5))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition5);
-                var occ6   = (isNaN(riderInfo[0].TTCareerSummaryPosition6))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition6);
-                var occ7   = (isNaN(riderInfo[0].TTCareerSummaryPosition7))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition7);
-                var occ8   = (isNaN(riderInfo[0].TTCareerSummaryPosition8))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition8);
-                var occ9   = (isNaN(riderInfo[0].TTCareerSummaryPosition9))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition9);
-                var occ10  = (isNaN(riderInfo[0].TTCareerSummaryPosition10))  ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition10);
-                var occDNF = (isNaN(riderInfo[0].TTCareerSummaryPositionDNF)) ? 0 : parseInt(riderInfo[0].TTCareerSummaryPositionDNF);
-                if ( occ1>0 || occ2>0 || occ3>0 || occ4> 0 || occ5>0 || occ6>0 || occ7>0 || occ8>0 || occ9>0 || occ10>0 || occDNF>0 ) {
-                    riderInfoHTML += "<hr />\n";
-                    riderInfoHTML += "<p>This table shows how many times has come in each of the top ten places in any TT race, and how many times they did not finish (DNF) a race they began.</p>\n";
-                    riderInfoHTML += "<table class=\"ttCareerSummary\" summary=\"TT Career Summary\"><caption><strong>TT Career Summary</strong></caption><tr><th id=\"position\">Position</th><td headers=\"position\">1</td><td headers=\"position\">2</td><td headers=\"position\">3</td><td headers=\"position\">4</td><td headers=\"position\">5</td><td headers=\"position\">6</td><td headers=\"position\">7</td><td headers=\"position\">8</td><td headers=\"position\">9</td><td headers=\"position\">10</td><td headers=\"position\"><abbr title=\"Did not finish\">DNF</abbr></td></tr><tr><th id=\"numTimes\">No of times</th><td headers=\"numTimes\">"+occ1+"</td><td headers=\"numTimes\">"+occ2+"</td><td headers=\"numTimes\">"+occ3+"</td><td headers=\"numTimes\">"+occ4+"</td><td headers=\"numTimes\">"+occ5+"</td><td headers=\"numTimes\">"+occ6+"</td><td headers=\"numTimes\">"+occ7+"</td><td headers=\"numTimes\">"+occ8+"</td><td headers=\"numTimes\">"+occ9+"</td><td headers=\"numTimes\">"+occ10+"</td><td headers=\"numTimes\">"+occDNF+"</td></tr></table>";
-                }
-
-                // update the rider info div with the detailed HTML
-                $("#riderInfo").html(riderInfoHTML);
+                raceClassRecords.forEach(function(idx) {
+                    idx.values.forEach(function(innerIdx) {
+                        g.append("svg:path")
+                            .datum( innerIdx.values )
+                            //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
+                            .attr("class", "race-line "+innerIdx.key)
+                            .attr("d", lineClosed)
+                            .on("mouseover", raceLineMouseOver )
+                            .on("mouseout", raceLineMouseOut );
+                    });
+                });
             }
-
-            // build out the text to show on the TOOLTIP
-            var riderInfoText = "<ul>\n";
-            riderInfoText += "<li><b>Rider:</b> "+d[0].Rider1+"</li>\n";
-            if (d[0].Rider2 !== null && d[0].Rider2.length > 0) {
-                riderInfoText += "<li><b>Second Rider:</b> "+d[0].Rider2+"</li>\n";
-            }
-            riderInfoText += "<li><b>Race Class:</b> "+d[0].RaceClass.Class+"</li>\n";
-            riderInfoText += "</ul>\n";
-
-            // show the TOOLTIP in the main visualization area
-            info.enter()
-                .append("div")
-                .attr("class","race-line-tooltip")
-                .attr("style", "top: " + this._yoff + "px; left: " + this._xoff + "px;")
-                .html(riderInfoText);
-
-            // highlight the race line by making it have a thicker line stroke and color it darkly
-            d3.select(this).attr("class","race-line-selected colorSelected");
-
-            return 0;
         }
-
-        // remove the tooltip and drop the race line highlighting on mouseout
-        function raceLineMouseOut (d, i) {
-            // quickly remove the rider info tooltip; don't want to do a transition because the user will most likely
-            // be mousing over/out of several lines at once since the primary visualization has a ton of race lines
-            d3.selectAll(".race-line-tooltip").remove();
-
-            // jQuery method of hiding the tooltip
-            //$("#riderInfo").html("");
-
-            // remove the rider detailed info
-            $("#riderInfo").html("");
-
-            // and remove the highlighting of the race line
-            d3.select(this).attr("class","race-line color-unselected");
-            return 0;
-		}
-
-        // show the line graphs for each rider that has ever ridden in the TT Formula One races in any year
-
-        formulaoneRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                //svg.append("path")
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color-unselected")
-                    .attr("d", lineClosed)
-                    .on("mouseover", raceLineMouseOver )
-                    .on("mouseout", raceLineMouseOut );
-            });
-        });
-
-        /*
-        juniorRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color2")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color2"); });
-            });
-        });
-
-        lightweightRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color3")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color3"); });
-            });
-        });
-
-        productionRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color4")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color4"); });
-            });
-        });
-
-        seniorRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color5")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color5"); });
-            });
-        });
-
-        sidecaraRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                 g.append("svg:path")
-                     .datum( innerIdx.values )
-                     .attr("class", "race-line color6")
-                     .attr("d", lineClosed)
-                     .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                     .on("mouseout", function(d) { d3.select(this).attr("class","race-line color6"); });
-             });
-         });
-
-        sidecarbRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color7")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color7"); });
-            });
-        });
-
-
-        singlesRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color8")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color8"); });
-            });
-        });
-
-        superbikeRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color9")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color9"); });
-            });
-        });
-
-        supersportaRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color10")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color10"); });
-            });
-        });
-
-        supersportbRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color11")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color11"); });
-            });
-        });
-
-        superstockRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color12")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color12"); });
-            });
-        });
-
-        ultralightweightRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color13")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color13"); });
-            });
-        });
-
-        zeroRaces.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    .attr("class", "race-line color14")
-                    .attr("d", lineClosed)
-                    .on("mouseover", function(d){ d3.select(this).attr("class","race-line-selected colorSelected"); })
-                    .on("mouseout", function(d) { d3.select(this).attr("class","race-line color14"); });
-            });
-        });
-        */
-
-
     });
 
-
-
-
-
-
-
 }
+
+
+// show a tooltip with rider information and highlight the racing line when mousing over one
+function raceLineMouseOver (d, i) {
+    var con = d3.select("#viz");
+
+    // Since our information box is going to be appended into the
+    // overall visualization container, we need to find out its position
+    // on the screen so that the absolutely positioned infobox shows up
+    // in the right place. It's easy to do this with jQuery
+    var pos = $(con[0][0]).position();
+
+    // d3.mouse returns the mouse coordinates relative to the specified
+    // container. Since we'll be appending the small infobox to the
+    // overall visualization container, we want the mouse coordinates
+    // relative to that.
+    var mouse = d3.mouse(con[0][0]);
+    var info = con.selectAll("div.race-line-tooltip").data([mouse]);
+
+    // change the offset a little bit
+    var cushion = [10, 10];
+    // record the offset as part of the 'this' context, which in this
+    // case stands for the circle that initiated the mouseover event
+    this._xoff = cushion[0] + mouse[0] + pos.left;
+    this._yoff = cushion[1] + mouse[1] + pos.top;
+
+    // try to find information in riderDataset on this particular rider based on the RiderID value
+    var curRiderID = d[0].RiderID;
+    var riderInfo = riderDataset.filter(function(d) { return d.RiderID === curRiderID; });
+
+    // if we found the rider info in the riderDataset, build out the ASIDE detailed info on the rider
+    if ( riderInfo !== null && riderInfo.length === 1) {
+        var riderInfoHTML = "<h2><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+"</a></h2>\n";
+        //riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+" TT Database link</a></p><br />\n";
+        riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">TT Database rider profile</a></p><br />\n";
+
+        // clean and show the rider biography
+        var bio = riderInfo[0].Biography;
+        if (bio !== null && bio.length > 0) {
+            // if we find any occurrences of two successive single quotes, replace them with one single quote
+            bio = bio.replace(/""+/ig, '"');
+            // update the IOMTT database website relative path for any inline images to use the
+            // fully-qualified URL to the images
+            bio = bio.replace(/\/images\/cache/ig, 'http://www.iomtt.com/images/cache');
+            riderInfoHTML += "<p>"+bio+"</p>\n";
+        }
+
+        // show any rider pictures we found
+        if (
+        //(riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) ||
+            (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) ||
+                (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0)
+            ) {
+            riderInfoHTML += "<hr />\n";
+            //if (riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) {
+            //    riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture1+"\" title=\""+riderInfo[0].RiderName+"\ picture 1\" />\n";
+            //}
+            if (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) {
+                riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture2+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
+            }
+            if (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0) {
+                riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture3+"\" title=\""+riderInfo[0].RiderName+"\ picture 3\" />\n";
+            }
+        }
+
+        // determine if we have non-zero values for career TT race placement in positions 1-10, or DNF occurrences
+        var occ1   = (isNaN(riderInfo[0].TTCareerSummaryPosition1))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition1);
+        var occ2   = (isNaN(riderInfo[0].TTCareerSummaryPosition2))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition2);
+        var occ3   = (isNaN(riderInfo[0].TTCareerSummaryPosition3))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition3);
+        var occ4   = (isNaN(riderInfo[0].TTCareerSummaryPosition4))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition4);
+        var occ5   = (isNaN(riderInfo[0].TTCareerSummaryPosition5))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition5);
+        var occ6   = (isNaN(riderInfo[0].TTCareerSummaryPosition6))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition6);
+        var occ7   = (isNaN(riderInfo[0].TTCareerSummaryPosition7))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition7);
+        var occ8   = (isNaN(riderInfo[0].TTCareerSummaryPosition8))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition8);
+        var occ9   = (isNaN(riderInfo[0].TTCareerSummaryPosition9))   ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition9);
+        var occ10  = (isNaN(riderInfo[0].TTCareerSummaryPosition10))  ? 0 : parseInt(riderInfo[0].TTCareerSummaryPosition10);
+        var occDNF = (isNaN(riderInfo[0].TTCareerSummaryPositionDNF)) ? 0 : parseInt(riderInfo[0].TTCareerSummaryPositionDNF);
+        if ( occ1>0 || occ2>0 || occ3>0 || occ4> 0 || occ5>0 || occ6>0 || occ7>0 || occ8>0 || occ9>0 || occ10>0 || occDNF>0 ) {
+            riderInfoHTML += "<hr />\n";
+            riderInfoHTML += "<p>This table shows how many times has come in each of the top ten places in any TT race, and how many times they did not finish (DNF) a race they began.</p>\n";
+            riderInfoHTML += "<table class=\"ttCareerSummary\" summary=\"TT Career Summary\"><caption><strong>TT Career Summary</strong></caption><tr><th id=\"position\">Position</th><td headers=\"position\">1</td><td headers=\"position\">2</td><td headers=\"position\">3</td><td headers=\"position\">4</td><td headers=\"position\">5</td><td headers=\"position\">6</td><td headers=\"position\">7</td><td headers=\"position\">8</td><td headers=\"position\">9</td><td headers=\"position\">10</td><td headers=\"position\"><abbr title=\"Did not finish\">DNF</abbr></td></tr><tr><th id=\"numTimes\">No of times</th><td headers=\"numTimes\">"+occ1+"</td><td headers=\"numTimes\">"+occ2+"</td><td headers=\"numTimes\">"+occ3+"</td><td headers=\"numTimes\">"+occ4+"</td><td headers=\"numTimes\">"+occ5+"</td><td headers=\"numTimes\">"+occ6+"</td><td headers=\"numTimes\">"+occ7+"</td><td headers=\"numTimes\">"+occ8+"</td><td headers=\"numTimes\">"+occ9+"</td><td headers=\"numTimes\">"+occ10+"</td><td headers=\"numTimes\">"+occDNF+"</td></tr></table>";
+        }
+
+        // update the rider info div with the detailed HTML
+        $("#riderInfo").html(riderInfoHTML);
+    }
+
+    // build out the text to show on the TOOLTIP
+    var riderInfoText = "<ul>\n";
+    riderInfoText += "<li><b>Rider:</b> "+d[0].Rider1+"</li>\n";
+    if (d[0].Rider2 !== null && d[0].Rider2.length > 0) {
+        riderInfoText += "<li><b>Second Rider:</b> "+d[0].Rider2+"</li>\n";
+    }
+    riderInfoText += "<li><b>Race Class:</b> "+d[0].RaceClass.Class+"</li>\n";
+    riderInfoText += "</ul>\n";
+
+    // show the TOOLTIP in the main visualization area
+    info.enter()
+        .append("div")
+        .attr("class","race-line-tooltip")
+        .attr("style", "top: " + this._yoff + "px; left: " + this._xoff + "px;")
+        .html(riderInfoText);
+
+    // highlight the race line by making it have a thicker line stroke and color it darkly
+    d3.select(this).attr("class","race-line-selected colorSelected");
+
+    return 0;
+}
+
+
+// remove the tooltip and drop the race line highlighting on mouseout
+function raceLineMouseOut (d, i) {
+    // quickly remove the rider info tooltip; don't want to do a transition because the user will most likely
+    // be mousing over/out of several lines at once since the primary visualization has a ton of race lines
+    d3.selectAll(".race-line-tooltip").remove();
+
+    // remove the rider detailed info
+    $("#riderInfo").html("");
+
+    //var classToRestore = getRaceClassLineStyle(d);
+    var classToRestore = getRaceClassLineStyle(d[0].RaceType);
+
+    // and remove the highlighting of the race line, and return the original class coloring
+    d3.select(this).attr("class","race-line "+classToRestore);
+
+    return 0;
+}
+
+
+function getRaceClassLineStyle(raceClass) {
+    switch (raceClass) {
+        case "formulaone" :
+            return "color1";
+        case "junior" :
+            return "color2";
+        case "lightweight" :
+            return "color3";
+        case "production" :
+            return "color4";
+        case "senior" :
+            return "color5";
+        case "sidecara" :
+            return "color6";
+        case "sidecarb" :
+            return "color7";
+        case "singles" :
+            return "color8";
+        case "superbike" :
+            return "color9";
+        case "supersporta" :
+            return "color10";
+        case "supersportb" :
+            return "color11";
+        case "superstock" :
+            return "color12";
+        case "ultralightweight" :
+            return "color13";
+        case "zero" :
+            return "color14";
+    }
+}
+
+

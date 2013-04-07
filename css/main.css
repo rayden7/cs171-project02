@@ -140,7 +140,6 @@ header {
 }
 
     header h1 {
-        /*margin-top: 5px;*/
         padding-top: 10px;
     }
 
@@ -165,6 +164,7 @@ ul#main-nav {
     -webkit-border-radius: 0.9em;
     background-color: #d3d3d3;
 }
+
 #main-nav li:hover {
     background-color: #a9a9a9;
 }
@@ -183,12 +183,10 @@ article {
 
 footer {
     clear: both;
-
     width: 100%;
     height: 100px;
     text-align: center;
-    background: red;
-    margin: 0;
+    margin: 20px auto;
     padding: 0;
 }
 

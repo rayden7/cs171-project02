@@ -17,6 +17,9 @@
 aside {
     border: 1px solid black;
     background: yellow;
+    background: #ffffff;
+    background-color: #d3d3d3;
+    background-color: #E2E2E2;
     margin: 5px;
     padding: 3px;
     width: 425px;
@@ -35,19 +38,16 @@ aside {
         margin-top: 0;
         min-height: 450px;
         height: 550px;
-        /*margin-left: 10px;*/
         padding: 5px;
         overflow-y: scroll;
         overflow: -moz-scrollbars-vertical;
     }
 
     img.floatleft {
-
         border: 10px solid red;
         border: 1px solid black;
         float: left;
-        margin: 0 0 3px 3px;
-        /*clear: both;*/
+        margin: 0 5px 5px 0;
     }
 
     #viz-info {
@@ -105,8 +105,6 @@ hr {
     stroke-width: 1.5px;
 }
 
-
-
 .race-line {
     fill: none;
     stroke-width: 0.5px;
@@ -117,10 +115,7 @@ hr {
 
 .race-line-selected {
     fill: none;
-    stroke-width: 1.5px;
-    stroke-width: 2.5px;
     stroke-width: 3.5px;
-    stroke-width: 5.0px;
 }
 
 .colorSelected { stroke: black; }
@@ -130,22 +125,22 @@ hr {
 .color-unselected { stroke: #ccc; }
 
 
-.color1 { stroke: blue; }
-.color2 { stroke: blueviolet; }
-.color3 { stroke: brown; }
+.color1, .formulaone  { stroke: blue; }
+.color2, .junior      { stroke: blueviolet; }
+.color3, .lightweight { stroke: brown; }
 /*.color4 { stroke: burlywood; }*/
-.color4 { stroke: brown; }
-.color5 { stroke: cadetblue; }
-.color6 { stroke: chartreuse; }
-.color7 { stroke: chocolate; }
-.color8 { stroke: orange; }
-.color9 { stroke: orangered; }
-.color10 { stroke: olive; }
-.color11 { stroke: lawngreen; }
+.color4, .production  { stroke: brown; }
+.color5, .senior { stroke: cadetblue; }
+.color6, .sidecara { stroke: chartreuse; }
+.color7, .sidecarb { stroke: chocolate; }
+.color8, .singles { stroke: orange; }
+.color9, .superbike { stroke: orangered; }
+.color10, .supersporta { stroke: olive; }
+.color11, .supersportb { stroke: lawngreen; }
 /*.color12 { stroke: lightblue; }*/
-.color12 { stroke: darkblue; }
-.color13 { stroke: gray; }
-.color14 { stroke: indigo; }
+.color12, .superstock { stroke: darkblue; }
+.color13, .ultralightweight { stroke: gray; }
+.color14, .zero { stroke: indigo; }
 
 
 .race-line-tooltip {
@@ -154,12 +149,8 @@ hr {
     -moz-border-radius: 0.9em;
     -webkit-border-radius: 0.9em;
     background: #ccc;
-    width: 350px;
-    height: 350px;
-
     width: 245px;
     height: 40px;
-
     margin: 5px;
     overflow: hidden;
     position: absolute;
