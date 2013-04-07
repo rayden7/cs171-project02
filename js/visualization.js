@@ -177,107 +177,79 @@ var raceClasses = {
 
 
 
-
+// declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
-    width = 1150 - margin.left - margin.right,
+    //width = 1150 - margin.left - margin.right,
+    //height = 750 - margin.top - margin.bottom;
+
+    //width = 1100 - margin.left - margin.right,
+    //height = 700 - margin.top - margin.bottom;
+
+    width = 1050 - margin.left - margin.right,
     height = 750 - margin.top - margin.bottom;
 
 
+// translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg = d3.select("#viz").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// later we will be appending rider race class race performance lines to this element
 var g = d3.select("g");
-
-
 
 
 
 // execute the CSV load and generate the graph once the window has loaded
 window.onload = function() {
 
-    var margin = {top: 20, right: 20, bottom: 50, left: 50},
-        width = 1150 - margin.left - margin.right,
-        height = 750 - margin.top - margin.bottom;
-
-    var parseDate = d3.time.format("%Y").parse;
-
     var x = d3.time.scale().range([0, width]);
 
-    var y = d3.scale.linear()
-        .range([height, 0]);
+    var y = d3.scale.linear().range([height, 0]);
 
     // NOTE: we are initially declaring our X and Y axes because we want to use custom labels,
     // and we are intimately familiar with the dataset, so we know the ranges for each
     var xAxis = d3.svg.axis()
-        .scale(x)
-        .tickValues([
-            new Date(1991,0),
-            new Date(1992,0),
-            new Date(1993,0),
-            new Date(1994,0),
-            new Date(1995,0),
-            new Date(1996,0),
-            new Date(1997,0),
-            new Date(1998,0),
-            new Date(1999,0),
-            new Date(2000,0),
-            new Date(2001,0),
-            new Date(2002,0),
-            new Date(2003,0),
-            new Date(2004,0),
-            new Date(2005,0),
-            new Date(2006,0),
-            new Date(2007,0),
-            new Date(2008,0),
-            new Date(2009,0),
-            new Date(2010,0),
-            new Date(2011,0),
-            new Date(2012,0)
-        ])
-        .orient("bottom");
+                      .scale(x)
+                      .tickValues([
+                          new Date(1991,0), new Date(1992,0), new Date(1993,0), new Date(1994,0), new Date(1995,0),
+                          new Date(1996,0), new Date(1997,0), new Date(1998,0), new Date(1999,0), new Date(2000,0),
+                          new Date(2001,0), new Date(2002,0), new Date(2003,0), new Date(2004,0), new Date(2005,0),
+                          new Date(2006,0), new Date(2007,0), new Date(2008,0), new Date(2009,0), new Date(2010,0),
+                          new Date(2011,0), new Date(2012,0)
+                      ])
+                      .orient("bottom");
 
     var yAxis = d3.svg.axis()
-        .scale(y)
-        .tickValues([1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,70,71,72])
-        .tickFormat(function(d) {
-            if (isNaN(d)) {
-                return d.toString();
-            } else {
-                return d;
-            }
-        })
-        .orient("left");
+                      .scale(y)
+                      .tickValues([1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,70,71,72])
+                      .tickFormat(function(d) {
+                          if (isNaN(d)) {
+                              return d.toString();
+                          } else {
+                              return d;
+                          }
+                      })
+                      .orient("left");
 
     var line = d3.svg.line()
-        .x(function(d) { return x(d.Year); })
-        .y(function(d) { return y(d.Position); });
+                     .x(function(d) { return x(d.Year); })
+                     .y(function(d) { return y(d.Position); });
 
     var lineClosed = d3.svg.line()
-        .x(function(d) { return x(d.Year); })
-        .y(function(d) { return y(d.Position); })
-        .defined(function(d){ return (d.x !== null && d.y !== null); });
-
-// TT VIDEO LINK TO EXPLAIN WHAT IT IS, SHOULD PUT IN PROCESS BOOK AND : http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4
+                           .x(function(d) { return x(d.Year); })
+                           .y(function(d) { return y(d.Position); })
+                           .defined(function(d){ return (d.x !== null && d.y !== null); });
 
 
-    function getRaceClass(raceName) {
-        for (var raceKey in raceClasses) {
-            //if (raceName.toLowerCase().indexOf(raceKey) > -1) {
-            var regex = new RegExp(raceKey, "ig");
-            raceName = raceName.replace(/\s+/g, '');  // remove spaces from the race name so we can perform regex matches against the raceClasses which have no spaces
+    //****************************************************************************************************************//
+    //                                                                                                                //
+    // TT VIDEO LINK TO EXPLAIN WHAT THE ISLE OF MAN TT IS - SHOULD PUT IN PROCESS BOOK AND LINK FROM VISUALIZATION   //
+    //      http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4                                        //
+    //                                                                                                                //
+    //****************************************************************************************************************//
 
-            if (raceName.match(regex)) {
-                return raceClasses[raceKey];
-            }
-            else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
-                return raceClasses["lightweight"];
-            }
-        }
-        return null;  // race class not found
-    }
 
     /*
      * Because the different race names have overlaps (e.g., there are often several races of a given class in a
@@ -441,7 +413,9 @@ window.onload = function() {
         //********************************************************************************************************************//
 
         x.domain(d3.extent(dataset, function(d) { return d.Year; }));
-        y.domain([dnfPlace, 1]);  // go from last place (plus 1, to give a bit of a space buffer) to first place
+
+        // go from last place (72nd place is reserved for "DNF" - did not finish - records, all the way up to first place)
+        y.domain([dnfPlace, 1]);
 
         // draw the X-axis indicating the year the races were held (note that in 2001 the TT was cancelled due to
         // the Foot & Mouth Disease outbreak (see: http://www.iomtt.com/TT-Database/Events.aspx?meet_code=TT01)
@@ -489,6 +463,16 @@ window.onload = function() {
             // then draw all the race lines for the specified class
             for (var raceClass in raceClasses) {
 
+/*
+                <h3>Race Classes</h3>
+                <div id="raceClassFilter"></div>
+
+                    <hr />
+                    <h3>TT Riders</h3>
+                    <div id="riderFilter"></div>
+*/
+
+
                 //console.log("current race class: ["+raceClass+"]");
 
                 // filter out each race and group them first by unique rider, then by race type, and finally,
@@ -501,14 +485,15 @@ window.onload = function() {
                 raceClassRecords.forEach(function(idx) {
                     idx.values.forEach(function(innerIdx) {
                         g.append("svg:path")
-                            .datum( innerIdx.values )
-                            //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
-                            .attr("class", "race-line "+innerIdx.key)
-                            .attr("d", lineClosed)
-                            .on("mouseover", raceLineMouseOver )
-                            .on("mouseout", raceLineMouseOut );
+                         .datum( innerIdx.values )
+                         //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
+                         .attr("class", "race-line "+innerIdx.key)
+                         .attr("d", lineClosed)
+                         .on("mouseover", raceLineMouseOver )
+                         .on("mouseout", raceLineMouseOut );
                     });
                 });
+
             }
         }
     });
@@ -633,7 +618,6 @@ function raceLineMouseOut (d, i) {
     // remove the rider detailed info
     $("#riderInfo").html("");
 
-    //var classToRestore = getRaceClassLineStyle(d);
     var classToRestore = getRaceClassLineStyle(d[0].RaceType);
 
     // and remove the highlighting of the race line, and return the original class coloring
@@ -642,6 +626,22 @@ function raceLineMouseOut (d, i) {
     return 0;
 }
 
+
+function getRaceClass(raceName) {
+    for (var raceKey in raceClasses) {
+        //if (raceName.toLowerCase().indexOf(raceKey) > -1) {
+        var regex = new RegExp(raceKey, "ig");
+        raceName = raceName.replace(/\s+/g, '');  // remove spaces from the race name so we can perform regex matches against the raceClasses which have no spaces
+
+        if (raceName.match(regex)) {
+            return raceClasses[raceKey];
+        }
+        else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
+            return raceClasses["lightweight"];
+        }
+    }
+    return null;  // race class not found
+}
 
 function getRaceClassLineStyle(raceClass) {
     switch (raceClass) {
@@ -675,5 +675,6 @@ function getRaceClassLineStyle(raceClass) {
             return "color14";
     }
 }
+
 
 

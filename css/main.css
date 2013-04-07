@@ -172,7 +172,7 @@ ul#main-nav {
 article {
     background-color: #ccc;
     text-align: justify;
-    width: 100%;
+    /*width: 100%;*/
     min-height: 600px;
     min-height: 900px;
     min-height: 1100px;
