@@ -176,6 +176,7 @@ var raceClasses = {
 };
 
 
+///// declare the margins, width, and height for the PRIMARY race line visualization
 
 // declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
@@ -193,6 +194,44 @@ var svg = d3.select("#viz").append("svg")
 // later we will be appending rider race class race performance lines to this element
 var g = d3.select("g");
 
+
+
+
+///// declare the margins, width, and height for the TERTIARY RIDER INFO visualization(s)
+
+// declare the margins, width, and height of the primary visualization area
+var margin2 = {
+                //top:    height + (margin.top / 2),
+                //top:    (margin.top / 3),
+                top:    3,
+                right:  (margin.right / 3),
+                bottom: (margin.bottom / 3),
+                left:   (margin.left / 3)
+    },
+    width2 = ((width / 3) - margin2.left - margin2.right),
+    height2 = (175 - margin2.top - margin2.bottom);
+
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+//var svg2 = d3.select("#viz").append("svg")
+/*
+var svg2 = d3.select("svg")
+                .append("g")
+                .attr("width", width2 + margin2.left + margin2.right)
+                .attr("height", height2 + margin2.top + margin2.bottom)
+                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+*/
+//var svg2 = d3.select("svg").append("g")
+var svg2 = d3.select("#viz")
+            .append("svg")
+            .attr("width", width2 + margin2.left + margin2.right)
+            .attr("height", height2 + margin2.top + margin2.bottom)
+            .append("g")
+                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+// later we will be appending rider race class race performance lines to this element
+//var g2 = d3.select("svg").selectAll("g")[1];
+//var g2 = svg2.selectAll("g");
+var g2 = svg2.select("g");
 
 
 // execute the CSV load and generate the graph once the window has loaded
@@ -456,17 +495,6 @@ window.onload = function() {
             // loop over each of the raceClasses, filter the dataset to get just riders in each class,
             // then draw all the race lines for the specified class
             for (var raceClass in raceClasses) {
-
-/*
-                <h3>Race Classes</h3>
-                <div id="raceClassFilter"></div>
-
-                    <hr />
-                    <h3>TT Riders</h3>
-                    <div id="riderFilter"></div>
-*/
-
-
                 //console.log("current race class: ["+raceClass+"]");
 
                 // filter out each race and group them first by unique rider, then by race type, and finally,
@@ -474,7 +502,8 @@ window.onload = function() {
                 var raceClassRecords = d3.nest()
                     .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
                     .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
-                    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
+                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
+                    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
 
                 raceClassRecords.forEach(function(idx) {
                     idx.values.forEach(function(innerIdx) {
@@ -490,8 +519,107 @@ window.onload = function() {
 
             }
         }
+
+
+
+
+
+
+
+
+
     });
 
+}
+
+
+
+function drawRiderDetailGraphs(d, i) {
+
+    var RiderDNF = 0;
+
+    //alert("drawing rider detail graphs for rider...");
+    var w = 500;
+    //var w = 525;
+    //var h = 200;
+    var h = 175;
+    //var h = 150;
+    //var barPadding = 1;  // <-- New!
+    var padding = 30;
+    //var padding = 20;
+    //var padding = 15;
+
+
+    var extent = d3.extent(d, function(d){ return d.Year; });
+    var yearMin = d3.min(d, function(d){ return d.Year; }) - 1;
+    var yearMax = d3.max(d, function(d){ return d.Year; }) + 1;
+
+    // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
+    var lineScalex = d3.time.scale()
+                        //.domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })])
+                        //.domain([d3.extent(d, function(d){ return d.Year; })] )
+
+                        //.domain( d3.extent(d, function(d){ return d.Year; }) )
+                        .domain( [yearMin, yearMax] )
+
+                        //.domain([d3.min(d, function(d){ return d.Year; })-1, d3.max(d, function(d){ return d.Year; })+1] )
+                        //.domain([d3.min(d, function(d){ return d.Year-1; }), d3.max(d, function(d){ return d.Year+1; })] )
+                        //.domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+                        .range([padding, w - padding * 2]);
+
+
+    var xDomain = d3.extent(d, function(d){ return d.Year; });
+
+
+    var lineXAxis = d3.svg.axis()
+                        .scale(lineScalex)
+                        .orient("bottom");
+
+    var lineScaley = d3.scale.linear()
+                        //.domain([0, d3.max(d, function(d) { return +d.values.Speed; }) + 1])
+                        .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
+                        .range([h - padding, padding]);
+
+    var lineYAxis = d3.svg.axis()
+                        .scale(lineScaley)
+                        .orient("left")
+                        .ticks(5);
+
+
+    var line2 = d3.svg.line()
+                        .x(function(d) { return lineScalex(d.Year); })
+                        .y(function(d) { return lineScaley(d.Speed); });
+
+        svg2.append("g")
+            .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .call(lineXAxis)
+            .append("text")
+            .attr("x", w / 3)
+            //.attr("y", 15)
+            //.attr("y", 35)
+            .attr("y", 30)
+            .style("text-anchor", "end")
+            .text("Year");
+
+        svg2.append("g")
+            .attr("class", "axis rider-detail-graphs")
+            .attr("transform", "translate(" +  padding + ", 0)")
+            .call(lineYAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -32)
+            .attr("x", -(h/3)*2)
+            .text("Avg. Speed");
+
+
+
+
+
+}
+
+function removeRiderDetailGraphs() {
+    d3.selectAll(".rider-detail-graphs").remove();
 }
 
 
@@ -599,6 +727,9 @@ function raceLineMouseOver (d, i) {
     // highlight the race line by making it have a thicker line stroke and color it darkly
     d3.select(this).attr("class","race-line-selected colorSelected");
 
+
+    drawRiderDetailGraphs(d, i);
+
     return 0;
 }
 
@@ -616,6 +747,8 @@ function raceLineMouseOut (d, i) {
 
     // and remove the highlighting of the race line, and return the original class coloring
     d3.select(this).attr("class","race-line "+classToRestore);
+
+    removeRiderDetailGraphs();
 
     return 0;
 }
@@ -636,6 +769,7 @@ function getRaceClass(raceName) {
     }
     return null;  // race class not found
 }
+
 
 function getRaceClassLineStyle(raceClass) {
     switch (raceClass) {
@@ -671,4 +805,57 @@ function getRaceClassLineStyle(raceClass) {
 }
 
 
+
+
+function showRaceClassFilters() {
+
+    /*
+    <!--<p>this is where the race class filters will go</p>-->
+
+        <h3>Race Classes</h3>
+        <div id="raceClassFilter"></div>
+    */
+
+
+    // blank out any existing race class filters
+    $("#raceClassFilter").html("");
+
+
+    $("#raceClassFilter").appendChild("ul");
+
+
+
+    // loop over each of the raceClasses, filter the dataset to get just riders in each class,
+    // then draw all the race lines for the specified class
+    for (var raceClass in raceClasses) {
+
+        //console.log("current race class: ["+raceClass+"]");
+
+        // filter out each race and group them first by unique rider, then by race type, and finally,
+        // restrict the dataset to be only for that specified RaceClass
+        //var raceClassRecords = d3.nest()
+        //    .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
+        //    .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
+        //    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
+
+
+
+
+
+        raceClassRecords.forEach(function(idx) {
+            idx.values.forEach(function(innerIdx) {
+                g.append("svg:path")
+                    .datum( innerIdx.values )
+                    //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
+                    .attr("class", "race-line "+innerIdx.key)
+                    .attr("d", lineClosed)
+                    .on("mouseover", raceLineMouseOver )
+                    .on("mouseout", raceLineMouseOut );
+            });
+        });
+
+
+    }
+
+}
 

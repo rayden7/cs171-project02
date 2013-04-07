@@ -1,17 +1,51 @@
 
+
+/*
+<li><span class="raceFilter" id="formulaone"><div class="raceFilterBox"></div> TT Formula One</span></li>
+<li><span class="raceFilter" id="junior"><div class="raceFilterBox"></div> TT Junior</span></li>
+<li><span class="raceFilter" id="lightweight"><div class="raceFilterBox"></div> TT Lightweight</span></li>
+<li><span class="raceFilter" id="production"><div class="raceFilterBox"></div> TT International Production 1000</span></li>
+<li><span class="raceFilter" id="senior"><div class="raceFilterBox"></div> Senior TT</span></li>
+<li><span class="raceFilter" id="sidecara"><div class="raceFilterBox"></div> TT Sidecar Race A</span></li>
+<li><span class="raceFilter" id="sidecarb"><div class="raceFilterBox"></div> TT Sidecar Race B</span></li>
+<li><span class="raceFilter" id="singles"><div class="raceFilterBox"></div> TT Singles</span></li>
+<li><span class="raceFilter" id="superbike"><div class="raceFilterBox"></div> TT Superbike</span></li>
+<li><span class="raceFilter" id="supersporta"><div class="raceFilterBox"></div> TT Supersport Race A</span></li>
+<li><span class="raceFilter" id="supersportb"><div class="raceFilterBox"></div> TT Supersport Race B</span></li>
+<li><span class="raceFilter" id="superstock"><div class="raceFilterBox"></div> TT Superstock</span></li>
+<li><span class="raceFilter" id="ultralightweight"><div class="raceFilterBox"></div> TT Ultra Lightweight 125</span></li>
+<li><span class="raceFilter" id="zero"><div class="raceFilterBox"></div> TTXGP</span></li>
+*/
+
+.raceFilterBox {
+    border: 1px solid black;
+    width: 15px;
+    height: 15px;
+    float: left;
+    clear: both;
+}
+
 #viz {
     border: 1px solid black;
     background-color: white;
     min-width: 1050px;
     min-height: 750px;
     width: 1100px;
-    height: 775px;
+    height: 950px;
     margin: 5px;
     padding: 3px;
     float: left;
     border-radius: 0.9em;
     -moz-border-radius: 0.9em;
     -webkit-border-radius: 0.9em;
+}
+
+
+#viz svg {
+    float: left;
+    clear: both;
+    margin: 0;
+    padding: 0;
 }
 
 aside {
@@ -89,6 +123,10 @@ hr {
 .axis line {
     fill: none;
     stroke: #000;
+    /*
+    stroke-width: 5.5px;
+    stroke-width: 1.0px;
+    */
     stroke-width: 1.5px;
     shape-rendering: crispEdges;
 }
@@ -183,3 +221,9 @@ hr {
     margin-left: 3px;
     padding: 5px;
 }
+
+
+.rider-detail-graphs {
+    /*background-color: green;*/
+}
+
