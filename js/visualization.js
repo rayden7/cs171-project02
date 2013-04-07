@@ -179,12 +179,6 @@ var raceClasses = {
 
 // declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
-    //width = 1150 - margin.left - margin.right,
-    //height = 750 - margin.top - margin.bottom;
-
-    //width = 1100 - margin.left - margin.right,
-    //height = 700 - margin.top - margin.bottom;
-
     width = 1050 - margin.left - margin.right,
     height = 750 - margin.top - margin.bottom;
 
