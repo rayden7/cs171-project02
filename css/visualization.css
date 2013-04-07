@@ -42,12 +42,21 @@
 
 
 #viz svg {
+
     /*background-color: purple;*/
+
     float: left;
-    clear: both;
+
+/*    clear: both;*/
+
     margin: 0;
     padding: 0;
 }
+
+#viz svg:last-child {
+    /*background-color: green;*/
+}
+
 
 aside {
     border: 1px solid black;
@@ -165,6 +174,12 @@ hr {
     stroke-width: 1.5px;
 }
 
+.speed-line {
+    fill: none;
+    stroke-width: 5.0px;
+    color: orange;
+}
+
 .race-line {
     fill: none;
     stroke-width: 0.5px;
@@ -221,6 +236,23 @@ hr {
     list-style-type: none;
     margin-left: 3px;
     padding: 5px;
+}
+
+
+.speed-circle {
+    color: red;
+    fill: red;
+    opacity : 0.65;
+}
+.speed-circle-text {
+    color: black;
+    /*font-size: 0.55em;*/
+    /*font-size: 6px;*/
+    font-size: 7pt;
+    /*
+    margin-left: -25px;
+    padding-left: -25px;
+    */
 }
 
 

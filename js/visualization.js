@@ -183,6 +183,25 @@ var margin = {top: 20, right: 20, bottom: 50, left: 50},
     width = 1050 - margin.left - margin.right,
     height = 750 - margin.top - margin.bottom;
 
+///// declare the margins, width, and height for the TERTIARY RIDER INFO visualization(s)
+
+// Avg. Speed / Year visualization margins, width, height
+var margin2 = {
+        top:    3,
+        right:  (margin.right / 3),
+        bottom: (margin.bottom / 3),
+        left:   (margin.left / 3)
+    },
+    width2 = ((width / 3) - margin2.left - margin2.right),
+    height2 = (175);
+
+// Number of Times Rider Came In Each Position bar chart visualization margins, width, height
+var margin3 = margin2; width3 = width2, height3 = height2;
+// Number of Times Rider Came In Each Position visualization  margins, width, height
+var margin4 = margin3, width4 = width3, height4 = height3;
+
+
+
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg = d3.select("#viz").append("svg")
@@ -191,50 +210,51 @@ var svg = d3.select("#viz").append("svg")
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+var svg2 = d3.select("#viz")
+             .append("svg")
+             .attr("width", width2 + margin2.left + margin2.right)
+             .attr("height", height2 + margin2.top + margin2.bottom)
+             .append("g")
+             .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+var svg3 = d3.select("#viz")
+            .append("svg")
+            .attr("width", width3 + margin3.left + margin3.right)
+            .attr("height", height3 + margin3.top + margin3.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+var svg4 = d3.select("#viz")
+            .append("svg")
+            .attr("width", width4 + margin4.left + margin4.right)
+            .attr("height", height4 + margin4.top + margin4.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
+
+
+
+
 // later we will be appending rider race class race performance lines to this element
 var g = d3.select("g");
 
-
-
-
-///// declare the margins, width, and height for the TERTIARY RIDER INFO visualization(s)
-
-// declare the margins, width, and height of the primary visualization area
-var margin2 = {
-                //top:    height + (margin.top / 2),
-                //top:    (margin.top / 3),
-                top:    3,
-                right:  (margin.right / 3),
-                bottom: (margin.bottom / 3),
-                left:   (margin.left / 3)
-    },
-    width2 = ((width / 3) - margin2.left - margin2.right),
-    //height2 = (175 - margin2.top - margin2.bottom);
-    //height2 = (195 - margin2.top - margin2.bottom);
-    //height2 = (175);
-    height2 = (175);
-
-// translate the X and Y positions to make it easier to draw to the primary visualization area
-//var svg2 = d3.select("#viz").append("svg")
-/*
-var svg2 = d3.select("svg")
-                .append("g")
-                .attr("width", width2 + margin2.left + margin2.right)
-                .attr("height", height2 + margin2.top + margin2.bottom)
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-*/
-//var svg2 = d3.select("svg").append("g")
-var svg2 = d3.select("#viz")
-            .append("svg")
-            .attr("width", width2 + margin2.left + margin2.right)
-            .attr("height", height2 + margin2.top + margin2.bottom)
-            .append("g")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+// later we will be appending rider race class race performance lines to this element
+var g2 = svg2.select("g");
 
 // later we will be appending rider race class race performance lines to this element
-//var g2 = d3.select("svg").selectAll("g")[1];
-//var g2 = svg2.selectAll("g");
-var g2 = svg2.select("g");
+var g3 = svg3.select("g");
+
+// later we will be appending rider race class race performance lines to this element
+var g4 = svg4.select("g");
+
+
+
+
+
+
+
 
 
 // execute the CSV load and generate the graph once the window has loaded
@@ -505,8 +525,9 @@ window.onload = function() {
                 var raceClassRecords = d3.nest()
                     .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
                     .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
-                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
-                    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
+                    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
+                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
+                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
 
                 raceClassRecords.forEach(function(idx) {
                     idx.values.forEach(function(innerIdx) {
@@ -524,13 +545,6 @@ window.onload = function() {
         }
 
 
-
-
-
-
-
-
-
     });
 
 }
@@ -538,6 +552,10 @@ window.onload = function() {
 
 
 function drawRiderDetailGraphs(d, i) {
+
+
+/*
+    {
 
     var padding = 30;
     var w = width2 - padding;
@@ -567,7 +585,116 @@ function drawRiderDetailGraphs(d, i) {
                         .x(function(d) { return lineScalex(d.Year); })
                         .y(function(d) { return lineScaley(d.Speed); });
 
-        svg2.append("g")
+    svg2.append("g")
+        .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+        .attr("transform", "translate(0," + (h - padding) + ")")
+        .call(lineXAxis)
+        .append("text")
+        .attr("x", w / 2)
+        .attr("y", 30)
+        .style("text-anchor", "end")
+        .text("Year");
+
+    svg2.append("g")
+        .attr("class", "axis rider-detail-graphs")
+        .attr("transform", "translate(" +  padding + ", 0)")
+        .call(lineYAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -32)
+        .attr("x", -(h/3)*2)
+        .text("Avg. Speed");
+
+
+    ////////////// GOOD UP TO HERE //////////////
+
+    // draw the line chart
+    svg2.append("svg:path")
+        //.datum( d )
+        .datum( [d] )
+        .attr("class", "speed-line")
+        //.attr("d", line2(d))
+        .attr("d", line2 );
+        //.attr("transform", "translate(0," + (h - padding) + ")");
+
+//    g2.append("svg:path")
+//      .datum( d )
+//      .attr("class", "speed-line")
+//      .attr("d", line2);
+//
+//    g2.append("path")
+//      .datum( d )
+//      .attr("class", "speed-line")
+//      .attr("d", line2);
+//
+//    g.append("svg:path")
+//     .datum( d )
+//     .attr("class", "speed-line")
+//     .attr("d", line2);
+
+//
+//    //var city = svg2.selectAll(".speed-line")
+//    var city = g2.selectAll(".speed-line")
+//        .data( d )
+//        .enter().append("g");
+//        //.enter().append("path")
+//        //.attr("class", "speed-line");
+//
+//    city.append("path")
+//        .data( d )
+//        .enter().append("g")
+//        .attr("class", "speed-line")
+//        //.attr("d", function(d) { return line2(d); });
+//        .attr("d", d );
+//        //.style("stroke", function(d) { return color(d.name); });
+//
+//    var city = g2.selectAll(".speed-line")
+//        //.data( d )
+//        .enter().append("g")
+//            //.append("path")
+//        .data( d )
+//        .enter().append("svg:path")
+//        .attr("class", "speed-line")
+//        .attr("d", d );
+
+
+
+    }
+
+
+
+
+
+    {
+        var padding = 30;
+        var w = width2 - padding;
+        var h = height2;
+
+        // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
+        var lineScalex = d3.time.scale()
+            .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+            .range([padding, w ]);
+
+        var xDomain = d3.extent(d, function(d){ return d.Year; });
+
+        var lineXAxis = d3.svg.axis()
+            .scale(lineScalex)
+            .orient("bottom");
+
+        var lineScaley = d3.scale.linear()
+            .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
+            .range([h - padding, padding]);
+
+        var lineYAxis = d3.svg.axis()
+            .scale(lineScaley)
+            .orient("left")
+            .ticks(5);
+
+        var line2 = d3.svg.line()
+            .x(function(d) { return lineScalex(d.Year); })
+            .y(function(d) { return lineScaley(d.Speed); });
+
+        svg3.append("g")
             .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
             .attr("transform", "translate(0," + (h - padding) + ")")
             .call(lineXAxis)
@@ -577,7 +704,7 @@ function drawRiderDetailGraphs(d, i) {
             .style("text-anchor", "end")
             .text("Year");
 
-        svg2.append("g")
+        svg3.append("g")
             .attr("class", "axis rider-detail-graphs")
             .attr("transform", "translate(" +  padding + ", 0)")
             .call(lineYAxis)
@@ -587,11 +714,98 @@ function drawRiderDetailGraphs(d, i) {
             .attr("x", -(h/3)*2)
             .text("Avg. Speed");
 
-        svg2.append("path")
-            .datum( d )
-            .attr("class", "race-line")
-            .attr("d", line2);
 
+        ////////////// GOOD UP TO HERE //////////////
+
+        // draw the line chart
+        svg3.append("svg:path")
+            //.datum( d )
+            .datum( [d] )
+            .attr("class", "speed-line")
+            //.attr("d", line2(d))
+            .attr("d", line2 );
+        //.attr("transform", "translate(0," + (h - padding) + ")");
+
+    }
+
+
+*/
+
+
+    // show a graph with dots corresponding to the rider's average speed for races where they placed in positions
+    // 1-5; the relative size of the circle corresponds to their fastest lap speed
+    {
+        // filter out records from the dataset to only include race records where the rider came in 5th place or higher
+        d = d.filter( function(d){ return d.Position <= 5 });
+
+        // only show this graph if the rider has had one or more top 5 race finishes in the currently moused-over race line
+        if (d.length > 0) {
+            var padding = 30;
+            var w = width2 - padding;
+            var h = height2;
+
+            var scatterScalex = d3.time.scale()
+                .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+                .range([padding, w ]);
+
+            var scatterScaley = d3.scale.linear()
+                .domain([5, 1])  // we only care about positions 1-5 for this chart
+                .range([h - padding, padding]);
+
+            var scatterScaleR =  d3.scale.linear()
+                //.domain([140, 110])
+                .domain( [d3.max(d, function(d){ return d.Speed; }), d3.min(d, function(d){ return d.Speed; })-50] )
+                .range([15, 1]);
+
+            var numTicks = d.length;
+            var scatterXAxis = d3.svg.axis()
+                .scale(scatterScalex)
+                .ticks(numTicks)
+                .orient("bottom");
+
+            var scatterYAxis = d3.svg.axis()
+                .scale(scatterScaley)
+                .orient("left")
+                .ticks(5);
+
+            svg4.selectAll("circle")
+                .data(d)
+                .enter()
+                .append("circle")
+                .attr("class", "rider-detail-graphs speed-circle")
+                .attr("cy", function(d){ return scatterScaley(d.Position); })
+                .attr("cx", function(d) { return scatterScalex(d.Year); })
+                .attr("r", function(d){ return scatterScaleR(Math.ceil(d.Speed)); });
+
+            svg4.selectAll("text")
+               .data(d).enter()
+                .append("text")
+                .text(function(d) { return Math.ceil(d.Speed); })
+                .attr("class", "rider-detail-graphs speed-circle-text")
+                .attr("x", function(d) { return scatterScalex(d.Year)-10; })
+                .attr("y", function(d) { return scatterScaley(d.Position)-scatterScaleR(Math.ceil(d.Speed)); });
+
+            svg4.append("g")
+                .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+                .attr("transform", "translate(0," + (h - padding) + ")")
+                .call(scatterXAxis)
+                .append("text")
+                .attr("x", w / 2)
+                .attr("y", 30)
+                .style("text-anchor", "end")
+                .text("Year");
+
+            svg4.append("g")
+                .attr("class", "axis rider-detail-graphs")
+                .attr("transform", "translate(" +  padding + ", 0)")
+                .call(scatterYAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -32)
+                .attr("x", -(h/3)*2)
+                .text("Race Position");
+        }
+    }
 
 }
 
