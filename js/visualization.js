@@ -181,7 +181,8 @@ var raceClasses = {
 // declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
     width = 1050 - margin.left - margin.right,
-    height = 750 - margin.top - margin.bottom;
+    //height = 750 - margin.top - margin.bottom;
+    height = 250 - margin.top - margin.bottom;
 
 ///// declare the margins, width, and height for the TERTIARY RIDER INFO visualization(s)
 
@@ -553,8 +554,6 @@ window.onload = function() {
 
 function drawRiderDetailGraphs(d, i) {
 
-
-/*
     {
 
     var padding = 30;
@@ -564,6 +563,8 @@ function drawRiderDetailGraphs(d, i) {
     // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
     var lineScalex = d3.time.scale()
                         .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+                        //.domain(d3.time.years(d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; }), 1))
+                        //.domain(d3.time.years(d3.min(d, function(d){ return d.Year.getFullYear(); }), d3.max(d, function(d){ return d.Year.getFullYear(); }), 1))
                         .range([padding, w ]);
 
     var xDomain = d3.extent(d, function(d){ return d.Year; });
@@ -571,6 +572,13 @@ function drawRiderDetailGraphs(d, i) {
     var lineXAxis = d3.svg.axis()
                         .scale(lineScalex)
                         .orient("bottom");
+
+// https://github.com/mbostock/d3/wiki/Time-Intervals#wiki-year
+//
+// d3.time.years(start, stop[, step])
+// Alias for d3.time.year.range. Returns the year boundaries (midnight January 1st) after or equal to start
+// and before stop. If step is specified, then every step'th year will be returned. For example, a
+// step of 5 will return 2010, 2015, 2020, etc.
 
     var lineScaley = d3.scale.linear()
                         .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
@@ -585,37 +593,52 @@ function drawRiderDetailGraphs(d, i) {
                         .x(function(d) { return lineScalex(d.Year); })
                         .y(function(d) { return lineScaley(d.Speed); });
 
-    svg2.append("g")
-        .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
-        .attr("transform", "translate(0," + (h - padding) + ")")
-        .call(lineXAxis)
-        .append("text")
-        .attr("x", w / 2)
-        .attr("y", 30)
-        .style("text-anchor", "end")
-        .text("Year");
-
-    svg2.append("g")
-        .attr("class", "axis rider-detail-graphs")
-        .attr("transform", "translate(" +  padding + ", 0)")
-        .call(lineYAxis)
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -32)
-        .attr("x", -(h/3)*2)
-        .text("Avg. Speed");
 
 
     ////////////// GOOD UP TO HERE //////////////
 
     // draw the line chart
-    svg2.append("svg:path")
+    //svg2.append("svg:path")
+    svg2.append("path")
         //.datum( d )
-        .datum( [d] )
+        //.datum( [d] )
+        //.data( [d] )
+        .data( d )
         .attr("class", "speed-line")
         //.attr("d", line2(d))
         .attr("d", line2 );
         //.attr("transform", "translate(0," + (h - padding) + ")");
+
+
+
+
+
+
+
+
+        svg2.append("g")
+            .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .call(lineXAxis)
+            .append("text")
+            .attr("x", w / 2)
+            .attr("y", 30)
+            .style("text-anchor", "end")
+            .text("Year");
+
+        svg2.append("g")
+            .attr("class", "axis rider-detail-graphs")
+            .attr("transform", "translate(" +  padding + ", 0)")
+            .call(lineYAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -32)
+            .attr("x", -(h/3)*2)
+            .text("Avg. Speed");
+
+
+
+
 
 //    g2.append("svg:path")
 //      .datum( d )
@@ -663,74 +686,93 @@ function drawRiderDetailGraphs(d, i) {
 
 
 
-
-
+    // show a bar chart indicating how many times the rider has finished in a given position for the
+    // currently moused-over race class
     {
         var padding = 30;
         var w = width2 - padding;
         var h = height2;
+        var barPadding = 2;
 
-        // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
-        var lineScalex = d3.time.scale()
-            .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
-            .range([padding, w ]);
+        var dFiltered = d3.nest()
+            .key(function(d) { return d.Position }).sortKeys(d3.ascending)
+            .rollup(function (d) {
+                return {
+                    Times: (d.length),
+                    Name:  d3.min(d, function(g) {return g.Rider1}),
+                    Position: d3.min(d, function(g) {return g.Position}),
+                    Year: d3.min(d, function(g) {return g.Year})
+                }
+            })
+            .entries(d);
 
-        var xDomain = d3.extent(d, function(d){ return d.Year; });
+        var barScaleX = d3.time.scale()
+                            .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
+                            .range([padding, w ]);
 
-        var lineXAxis = d3.svg.axis()
-            .scale(lineScalex)
-            .orient("bottom");
+        var barScaleY = d3.scale.linear()
+                           .domain([0, d3.max(dFiltered, function(d) { return d.values.Times; })])
+                           .range([h, padding]);
 
-        var lineScaley = d3.scale.linear()
-            .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
-            .range([h - padding, padding]);
+        var barScaleY2 = d3.scale.linear()
+                           .domain([d3.max(dFiltered, function(d) { return d.values.Times; }), 0])
+                           .range([h - padding, 0]);
 
-        var lineYAxis = d3.svg.axis()
-            .scale(lineScaley)
-            .orient("left")
-            .ticks(5);
+        var barXAxis = d3.svg.axis()
+                             .scale(barScaleX)
+                             .orient("bottom");
 
-        var line2 = d3.svg.line()
-            .x(function(d) { return lineScalex(d.Year); })
-            .y(function(d) { return lineScaley(d.Speed); });
+        var barYAxis = d3.svg.axis()
+                            .scale(barScaleY)
+                            .orient("left");
+                            //.ticks(5);
 
-        svg3.append("g")
-            .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
-            .attr("transform", "translate(0," + (h - padding) + ")")
-            .call(lineXAxis)
+        svg3.selectAll("rect")
+            .data(dFiltered)
+            .enter()
+            .append("rect")
+            .attr("fill", "teal")
+            //.attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 1; })
+            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.length) + padding + 1; })
+
+            //.attr("y", function(d) { return  h -(barScaleY2(d.values.Times)); } )
+            .attr("y", function(d) { return  h -(barScaleY2(dFiltered.Times)); } )
+            //.attr("width", (w  - (padding * 3))/ dFiltered.values.length - barPadding)
+            .attr("width", (w  - (padding * 3))/ d.length - barPadding)
+            //.attr("height", function(d) { return barScaleY2(d.values.Times + padding); })
+            //.attr("height", function(d) { return barScaleY2(dFiltered.Times + padding); })
+            //.attr("height", function(d,i) { return barScaleY2(dFiltered[i].Times + padding); })
+            .attr("height", function(d,i) {
+
+                //var numTimes = dFiltered[i].values.Times;
+                var numTimes = d.values.Times;
+
+                console.log("numTimes: ["+numTimes+"]");
+
+                var curHeight = barScaleY2(numTimes + padding);
+                //var curHeight = barScaleY(numTimes + padding);
+                //var barHeight = barScaleY2(curHeight);
+                return curHeight;
+            })
+            .attr("class", "rider-detail-graphs");
+        /*
+        svg3.selectAll("text")
+            .data(dFiltered)
+            .enter()
             .append("text")
-            .attr("x", w / 2)
-            .attr("y", 30)
-            .style("text-anchor", "end")
-            .text("Year");
+            .text(function(d) { if (d.values.Position == 72) return "DNF"; else return d.values.Position; })
+            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 15; })
+            .attr("y", function(d) { return  h - padding  - 2 ; })
 
-        svg3.append("g")
-            .attr("class", "axis rider-detail-graphs")
-            .attr("transform", "translate(" +  padding + ", 0)")
-            .call(lineYAxis)
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -32)
-            .attr("x", -(h/3)*2)
-            .text("Avg. Speed");
+            .attr("class", "rider-detail-graphs")
 
-
-        ////////////// GOOD UP TO HERE //////////////
-
-        // draw the line chart
-        svg3.append("svg:path")
-            //.datum( d )
-            .datum( [d] )
-            .attr("class", "speed-line")
-            //.attr("d", line2(d))
-            .attr("d", line2 );
-        //.attr("transform", "translate(0," + (h - padding) + ")");
-
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11x")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "middle")
+            .attr("fill", "black");
+            */
     }
-
-
-*/
-
 
     // show a graph with dots corresponding to the rider's average speed for races where they placed in positions
     // 1-5; the relative size of the circle corresponds to their fastest lap speed
@@ -744,37 +786,36 @@ function drawRiderDetailGraphs(d, i) {
             var w = width2 - padding;
             var h = height2;
 
-            var scatterScalex = d3.time.scale()
+            var scatterScaleX = d3.time.scale()
                 .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
                 .range([padding, w ]);
 
-            var scatterScaley = d3.scale.linear()
+            var scatterScaleY = d3.scale.linear()
                 .domain([5, 1])  // we only care about positions 1-5 for this chart
                 .range([h - padding, padding]);
 
             var scatterScaleR =  d3.scale.linear()
-                //.domain([140, 110])
                 .domain( [d3.max(d, function(d){ return d.Speed; }), d3.min(d, function(d){ return d.Speed; })-50] )
                 .range([15, 1]);
 
             var numTicks = d.length;
             var scatterXAxis = d3.svg.axis()
-                .scale(scatterScalex)
+                .scale(scatterScaleX)
                 .ticks(numTicks)
                 .orient("bottom");
 
             var scatterYAxis = d3.svg.axis()
-                .scale(scatterScaley)
+                .scale(scatterScaleY)
                 .orient("left")
-                .ticks(5);
+                .ticks(5);  // just show 5 years on the Y-axis
 
             svg4.selectAll("circle")
                 .data(d)
                 .enter()
                 .append("circle")
                 .attr("class", "rider-detail-graphs speed-circle")
-                .attr("cy", function(d){ return scatterScaley(d.Position); })
-                .attr("cx", function(d) { return scatterScalex(d.Year); })
+                .attr("cy", function(d){ return scatterScaleY(d.Position); })
+                .attr("cx", function(d) { return scatterScaleX(d.Year); })
                 .attr("r", function(d){ return scatterScaleR(Math.ceil(d.Speed)); });
 
             svg4.selectAll("text")
@@ -782,8 +823,8 @@ function drawRiderDetailGraphs(d, i) {
                 .append("text")
                 .text(function(d) { return Math.ceil(d.Speed); })
                 .attr("class", "rider-detail-graphs speed-circle-text")
-                .attr("x", function(d) { return scatterScalex(d.Year)-10; })
-                .attr("y", function(d) { return scatterScaley(d.Position)-scatterScaleR(Math.ceil(d.Speed)); });
+                .attr("x", function(d) { return scatterScaleX(d.Year)-10; })
+                .attr("y", function(d) { return scatterScaleY(d.Position)-scatterScaleR(Math.ceil(d.Speed)); });
 
             svg4.append("g")
                 .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
