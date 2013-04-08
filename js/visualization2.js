@@ -754,12 +754,12 @@ function drawRiderDetailGraphs(d, i) {
 
         var barScaley = d3.scale.linear()
             .domain([0, d3.max(nestedRidersFiltered[0].values, function(d) { return d.values.Times; })])
-            .range([h - padding , padding]);
+            .rangeRound([h - padding , padding]);
 
 
         var barScaley2 = d3.scale.linear()
             .domain([d3.max(nestedRidersFiltered[0].values, function(d) { return d.values.Times; }), 0])
-            .range([  h - padding,padding]);
+            .rangeRound([  h - padding,padding]);
 
         var barScalex = d3.scale.linear()
                 .domain([
@@ -799,7 +799,7 @@ function drawRiderDetailGraphs(d, i) {
             .attr("height",  function(d){
 
                 // return d.values.Times ;
-                return barScaley2(d.values.Times + padding)  ;
+                return barScaley2(d.values.Times) - padding ;
 
             });
        // console.log(nestedRidersFiltered[0].values);
@@ -1055,10 +1055,10 @@ function drawRiderDetailGraphs(d, i) {
             svg4.selectAll("text")
                .data(d).enter()
                 .append("text")
-                .text(function(d) { return Math.ceil(d.Speed); })
+                .text(function(d) { return Math.ceil(d.Speed) ; })
                 .attr("class", "rider-detail-graphs speed-circle-text")
                 .attr("x", function(d) { return scatterScaleX(d.Year)-10; })
-                .attr("y", function(d) { return scatterScaleY(d.Position)-scatterScaleR(Math.ceil(d.Speed)); });
+                .attr("y", function(d) { return scatterScaleY(d.Position)-scatterScaleR(Math.ceil(d.Speed) - 5); });
 
             svg4.append("g")
                 .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
