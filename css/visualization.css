@@ -1,5 +1,4 @@
 
-
 /*
 <li><span class="raceFilter" id="formulaone"><div class="raceFilterBox"></div> TT Formula One</span></li>
 <li><span class="raceFilter" id="junior"><div class="raceFilterBox"></div> TT Junior</span></li>
@@ -42,13 +41,7 @@
 
 
 #viz svg {
-
-    /*background-color: purple;*/
-
     float: left;
-
-/*    clear: both;*/
-
     margin: 0;
     padding: 0;
 }
@@ -60,9 +53,6 @@
 
 aside {
     border: 1px solid black;
-    background: yellow;
-    background: #ffffff;
-    background-color: #d3d3d3;
     background-color: #E2E2E2;
     margin: 5px;
     padding: 3px;
@@ -76,13 +66,14 @@ aside {
     #viz-filters {
         min-height: 175px;
         height: 200px;
+        padding: 10px;
     }
 
     #riderInfo {
         margin-top: 0;
         min-height: 450px;
         height: 550px;
-        padding: 5px;
+        padding: 10px;
         overflow-y: scroll;
         overflow: -moz-scrollbars-vertical;
     }
@@ -95,13 +86,12 @@ aside {
 
     #viz-info {
         border: 1px solid black;
-        background: pink;
+        background: #ccc;
         min-width: 1100px;
         min-height: 200px;
-        width: 1200px;
-        height: 250px;
+        width: 98%;
         margin: 5px;
-        padding: 3px;
+        padding: 10px;
         float: left;
         clear: both;
         border-radius: 0.9em;
@@ -133,10 +123,6 @@ hr {
 .axis line {
     fill: none;
     stroke: #000;
-    /*
-    stroke-width: 5.5px;
-    stroke-width: 1.0px;
-    */
     stroke-width: 1.5px;
     shape-rendering: crispEdges;
 }

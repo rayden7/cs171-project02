@@ -189,13 +189,7 @@ ul#main-nav {
 }
 
 article {
-    background-color: #ccc;
     text-align: justify;
-    /*width: 100%;*/
-    /*
-    min-height: 600px;
-    min-height: 900px;
-    */
     min-height: 1100px;
     margin: 0;
     padding: 0px;
@@ -205,10 +199,9 @@ article {
 footer {
     clear: both;
     width: 100%;
-    height: 100px;
     text-align: center;
-    margin: 20px auto;
-    padding: 0;
+    margin: 30px auto;
+    padding: 10px 0 0 0;
 }
 
 
