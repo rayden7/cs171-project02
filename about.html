@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
-      xmlns="http://www.w3.org/1999/html">
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <meta charset="utf-8">
 <head>
     <title>The Isle of Man TT - How Long Does It Take To Becoming Proficient?</title>
@@ -25,7 +25,7 @@
         <li><a href="index.html">Main</a></li>
         <li><a href="races.html">Races</a></li>
         <li><a href="maps.html">Maps</a></li>
-        <li><a href="credits.html">Credits</a></li>
+        <li><a href="inspiration.html">Inspiration</a></li>
         <li><a href="about.html">About</a></li>
     </ul>
     <img class="tt-img tt-img-floatright" src="img/iomtt-logo-smaller.png" />
@@ -37,58 +37,34 @@
 
         <h2>About</h2>
 
-        <p>Our project comes about from a fascination with the incredibly brave and talented men (and women!) racers
-            that continue to show up every year at the Isle of Man TT and challenge world records, personal bests, and
-            each other.  After watching several documentaries about the annual TT races (including those already
-            mentioned on the <a href="index.html">main page</a>,
-            <a href="http://www.imdb.com/title/tt1698010/?ref_=fn_al_tt_1">TT3D: Closer To The Edge</a> and the BBC
-            ITV4 documentary
-            <a href="http://www.touchline.tv/tv/motorsport/manx-grand-prix-documentary-on-itv4">Grand Prix Racer</a>)
-            David was inspired to see if he could do some interesting visualizations on rider performance, learn more
-            about how long it takes riders to become proficient on the <a href="maps.html">Snaefell Mountain Course</a>,
-            and also create some really fun and interactive visualizations of the rich dataset that the official
-            <a href="http://www.iomtt.com/TT-Database.aspx">Isle of Man TT Database website</a> provides (particularly
-            because the official database website is primarily a relatively flat, boring dump of "numbers in tables"
-            kind of datadump, it was ripe for being the datasource for visualizing).</p><br />
-        <p>After David and Leo teamed up to work on the project, we were both also inspired by the example provided in
-            the <a href="https://docs.google.com/document/d/1K7RjtnDB9_4_YTF-cg8vxSoLi8oDEuE9fSNO1nMiQWo/edit">Project II</a> project document of "A good
-            multi-view example" of the <a href="http://cscheid.net/static/mlb­hall­of­fame­voting/">MLB Hall of Fame
-            Voting</a>, where it showed lines for each player and showed how many votes they received each year until
-            they reached (or in several cases, did not reach) enough votes to gain entry into the MLB Hall of Fame.
-            We felt that a graph like this for our Isle of Man TT rider and race data would be a neat way to visualize
-            how a rider has performed in the TT races over the years, and give us insight into our primary research
-            question, which is <b><i>"How long does it take most riders to become proficient at the Isle of Man
-            TT?"</i></b></p><br />
-        <p>We felt that we should focus our analysis of the rich 100+ year history of the Isle of Man TT by focusing in
-            on the <a href="http://www.iomtt.com/TT-Database/Events.aspx?era=5">modern era</a> of the
-            TT because the motorcycles used today are so vastly superior to those of earlier eras that the comparison
-            of older data to present-day data would not be fair (it is common for the best riders of today to reach
-            speeds in excess of 200 MPH on some of the straights at the <a href="maps.html">Snaefell Mountain
-            Course</a>.</p><br />
-        <p>Finally, we were further inspired by a few recent videos of recent Isle of Man TT events, as well as the
-            Irish Northwest 200 (considered a "warm-up" race for the official Isle of Man TT) here - these are best
-            viewed in full-screen and with your speakers turned all the way up:
-        <ul class="left-margin-bump">
-            <li><a href="http://vimeo.com/46856767" target="_blank">"The Greatest Show On Earth - 200 mph Street Race - Isle of Man TT"</a></li>
-            <li><a href="http://vimeo.com/55067330" target="_blank">Most Extreme Sport - Irish Road Racing - Ulster Grand Prix - Northwest 200</a></li>
-            <li><a href="http://vimeo.com/59191280" target="_blank">The Road Warriors - Irish Road Racing and Southern 100 - Isle of Man</a></li>
-            <li><a href="http://vimeo.com/59816919" target="_blank">Road Warriors 2 - North West 200, Southern 100, Isle of Man TT</a></li>
-        </ul>
-        </p><br /><br />
+        <p>Our primary interest for this project was visualizing the rich dataset of rider race performance on the
+            Isle of Man TT, and trying to answer the primary research question of, <b><i>"How long does it take most
+            riders to become proficient at the Isle of Man TT?"</i></b>.  Also, we wanted to find interesting ways to
+            visualize rider performance across 9 different race classes, over a period of 21 years (the modern era of
+            the TT).</p>
+        <p>We attempt Our visualization is a multi-view exmaple showing rider race performance data across several race
+            classes at the Isle of Man TT.  Each line on the primary visualization represents how the rider "placed"
+            in a given race class for a particular year.  When you move your mouse over a race line, the line will be
+            colored black and highlighted, showing you how the rider has fared in a given race over the years.  Also,
+            when you select a rider we show detailed information on them in a panel on the right, as well as 2 or 3
+            alternative visualizations below, which correspond to the rider's performance in the currently moused-over
+            race class.</p>
+        <br />
 
         <h2>Code & Process Book</h2>
         <p>To see the code we used to scrape the data from the TT Database and also the JavaScript / HTML / CSS
             / jQuery / D3 code we used to create the primary visualization, see our
-            <a href="https://github.com/rayden7/cs171-project02">Project II Github repository</a>.</p><br />
+            <a href="https://github.com/rayden7/cs171-project02">Project II Github repository</a>.</p>
 
         <p>To read more about how we built out this visualization, see our Google Drive
-            <a href="https://docs.google.com/document/d/1PG95QfW0-YFx-HRjBAYC87QeIbOJeit_5cBa2nenG40/edit?usp=sharing">Project II Process Book</a>.</p><br /><br />
+            <a href="https://docs.google.com/document/d/1PG95QfW0-YFx-HRjBAYC87QeIbOJeit_5cBa2nenG40/edit?usp=sharing">Project II Process Book</a>.</p>
+        <br />
 
         <h2>Software & Tools Used</h2>
         <p>David is a "Mac guy", Leo is a "PC guy", but we were able to share several tools and applications on both
             platforms.  Software, programming languages, toolkits, and services used to create this visualization:</p>
 
-        <ul class="left-margin-bump">
+        <ul class="left-margin-bump four-column">
             <li><a href="http://www.jetbrains.com/pycharm/">JetBrains PyCharm</a></li>
             <li><a href="http://www.jetbrains.com/webstorm/">JetBrains WebStorm</a></li>
             <li><a href="http://www.eclipse.org/">Eclipse</a></li>
@@ -114,7 +90,7 @@
             Project 2, and despite many very long hours of work, there are several areas that we would like to improve
             upon for our upcoming Project 3 submission that would make this visualization even better:</p>
 
-        <ul class="left-margin-bump">
+        <ul class="left-margin-bump improvements">
             <li><span class="category-header">Individual Rider Filtering:</span> similar to how the MLB Hall of Fame
                 Voting visualization allows you to search for individuals by name, we would also like to be able to
                 search for individual racers by name and then show appropriate visualizations for the riders that

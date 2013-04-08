@@ -102,10 +102,15 @@ aside {
         padding: 10px;
         float: left;
         clear: both;
+        font-size: 1.25em;
         border-radius: 0.9em;
         -moz-border-radius: 0.9em;
         -webkit-border-radius: 0.9em;
     }
+
+        #viz-info p {
+            margin-bottom: 1em;
+        }
 
 hr {
     padding-top: 3px;

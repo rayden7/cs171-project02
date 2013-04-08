@@ -213,6 +213,45 @@ article {
     padding: 10px;
 }
 
+.quotation {
+    border-radius: 2em;
+    -moz-border-radius: 2em;
+    -webkit-border-radius: 2em;
+    font-size: 1.25em;
+    text-align: justify;
+
+    border: 2px solid black;
+    margin: 20px auto;
+    padding: 30px;
+    width: 450px;
+    background-color: salmon;
+}
+
+.quotation p {
+    margin-bottom: 1em;
+}
+
+ul.improvements li {
+    margin-bottom: 1em;
+}
+
+div#viz-info ul.four-column {
+    margin-top: 10px;
+    list-style: none;
+    width: 1000px;
+    overflow:hidden;
+}
+div#viz-info ul.four-column li {
+    width: 50%;
+    width: 33%;
+    width: 25%;
+    width: 20%;
+    float:left;
+    display:inline;
+    margin-bottom: 5px;
+}
+
+
 
 footer {
     clear: both;
