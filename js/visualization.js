@@ -892,9 +892,10 @@ function raceLineMouseOver (d, i) {
         if (bio !== null && bio.length > 0) {
             // if we find any occurrences of two successive single quotes, replace them with one single quote
             bio = bio.replace(/""+/ig, '"');
-            // update the IOMTT database website relative path for any inline images to use the
-            // fully-qualified URL to the images
-            bio = bio.replace(/\/images\/cache/ig, 'http://www.iomtt.com/images/cache');
+            // update the IOMTT database website relative image path for any inline images to use our local copy of the
+            // images; I used "wget" to download and save local copies of them all, per the Project 2 requirement that
+            // ALL resources must be fully localized
+            bio = bio.replace(/\/images\/cache/ig, 'img/tt-rider-photos/');
             riderInfoHTML += "<p>"+bio+"</p>\n";
         }
 
@@ -905,10 +906,14 @@ function raceLineMouseOver (d, i) {
         ) {
             riderInfoHTML += "<hr />\n";
             if (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) {
-                riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture2+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
+                // we need to strip out the old, absolute URL to the IOMTT DB rider pictures, and substitute our own local copy of the pictures
+                var picture2URL = riderInfo[0].Picture2.replace("http://www.iomtt.com/images/cache/", "img/tt-rider-photos/");
+                riderInfoHTML += "<img class=\"riderPics\" src=\""+picture2URL+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
             }
             if (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0) {
-                riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture3+"\" title=\""+riderInfo[0].RiderName+"\ picture 3\" />\n";
+                // we need to strip out the old, absolute URL to the IOMTT DB rider pictures, and substitute our own local copy of the pictures
+                var picture3URL = riderInfo[0].Picture3.replace("http://www.iomtt.com/images/cache/", "img/tt-rider-photos/");
+                riderInfoHTML += "<img class=\"riderPics\" src=\""+picture3URL+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
             }
         }
 
@@ -932,6 +937,9 @@ function raceLineMouseOver (d, i) {
 
         // update the rider info div with the detailed HTML
         $("#riderInfo").html(riderInfoHTML);
+
+
+        console.log(riderInfoHTML);
     }
 
     // build out the text to show on the TOOLTIP
