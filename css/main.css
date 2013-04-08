@@ -197,10 +197,22 @@ ul#main-nav {
 article {
     text-align: justify;
     min-height: 1100px;
+    min-height: 300px;
     margin: 0;
     padding: 0px;
     clear: both;
 }
+
+.category-header {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.left-margin-bump {
+    margin-left: 25px;
+    padding: 10px;
+}
+
 
 footer {
     clear: both;
