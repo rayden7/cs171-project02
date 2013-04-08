@@ -36,7 +36,7 @@
 
 </style>
 <body>
-<script src="Script/d3.v3.js"></script>
+<script src="../../../../New/cs171-project02/Examples/LM/Script/d3.v3.js"></script>
 <script>
 /*
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
@@ -270,8 +270,6 @@ function getTooltipText(d) {
     return text;
 }
 
-
-
 //d3.csv("races_data.csv", function(error, data) {
 d3.csv("Data/races_data2.csv", function(error, data) {
     data.forEach(function(d) {
@@ -351,11 +349,11 @@ d3.csv("Data/races_data2.csv", function(error, data) {
             .entries(data.filter(function(d){
                 return  d.Rider1 == "John McGuinness"  && (d.Position > 0 && d.Position < 4)
             }));
-    console.log(nestedRidersFiltered2);
+   // console.log(nestedRidersFiltered2);
 
 
 
-    console.log(nestedRidersFiltered[0].values);
+    //console.log(nestedRidersFiltered[0].values);
     svg.selectAll("rect")
             .data(nestedRidersFiltered[0].values)
             .enter()
@@ -394,20 +392,7 @@ d3.csv("Data/races_data2.csv", function(error, data) {
             .attr("font-weight", "bold")
             .attr("text-anchor", "middle")
             .attr("fill", "white");
-    /*
-    var dataset2 = [
-        [ 5,     20 ],
-        [ 480,   90 ],
-        [ 250,   50 ],
-        [ 100,   33 ],
-        [ 330,   95 ],
-        [ 410,   12 ],
-        [ 475,   44 ],
-        [ 25,    67 ],
-        [ 85,    21 ],
-        [ 220,   88 ],
-        [600, 150]
-    ];      */
+
     var dataset2 = nestedRidersFiltered2[0].values;
     console.log(dataset2);
     var padding = 30;
@@ -427,7 +412,7 @@ d3.csv("Data/races_data2.csv", function(error, data) {
                     })])
                     .range([padding, w - padding * 2])
             ;
-
+          console.log(dataset);
     var scatterXAxis = d3.svg.axis()
             .scale(scatterScalex)
             .orient("bottom");
@@ -483,7 +468,8 @@ d3.csv("Data/races_data2.csv", function(error, data) {
             })
             .attr("r", function(d){
                // return Math.sqrt(h - d[1]);
-                return scatterScaleR(d.Position);
+                return scatterScaleR(d3.max(d, function(g){
+                    console.log(g.Speed);return +g.Speed}));
             });
     scatterSvg.selectAll("text")
             .data(dataset2)
