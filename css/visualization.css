@@ -1,28 +1,93 @@
 
 /*
-<li><span class="raceFilter" id="formulaone"><div class="raceFilterBox"></div> TT Formula One</span></li>
-<li><span class="raceFilter" id="junior"><div class="raceFilterBox"></div> TT Junior</span></li>
-<li><span class="raceFilter" id="lightweight"><div class="raceFilterBox"></div> TT Lightweight</span></li>
-<li><span class="raceFilter" id="production"><div class="raceFilterBox"></div> TT International Production 1000</span></li>
-<li><span class="raceFilter" id="senior"><div class="raceFilterBox"></div> Senior TT</span></li>
-<li><span class="raceFilter" id="sidecara"><div class="raceFilterBox"></div> TT Sidecar Race A</span></li>
-<li><span class="raceFilter" id="sidecarb"><div class="raceFilterBox"></div> TT Sidecar Race B</span></li>
-<li><span class="raceFilter" id="singles"><div class="raceFilterBox"></div> TT Singles</span></li>
-<li><span class="raceFilter" id="superbike"><div class="raceFilterBox"></div> TT Superbike</span></li>
-<li><span class="raceFilter" id="supersporta"><div class="raceFilterBox"></div> TT Supersport Race A</span></li>
-<li><span class="raceFilter" id="supersportb"><div class="raceFilterBox"></div> TT Supersport Race B</span></li>
-<li><span class="raceFilter" id="superstock"><div class="raceFilterBox"></div> TT Superstock</span></li>
-<li><span class="raceFilter" id="ultralightweight"><div class="raceFilterBox"></div> TT Ultra Lightweight 125</span></li>
-<li><span class="raceFilter" id="zero"><div class="raceFilterBox"></div> TTXGP</span></li>
+            <div id="raceClassFilter">
+
+                <ul>
+                    <li><span class="raceFilter" id="formulaone"><div class="raceFilterBox"></div> TT Formula One</span></li>
+                    <li><span class="raceFilter" id="junior"><div class="raceFilterBox"></div> TT Junior</span></li>
+                    <li><span class="raceFilter" id="lightweight"><div class="raceFilterBox"></div> TT Lightweight</span></li>
+                    <li><span class="raceFilter" id="production"><div class="raceFilterBox"></div> TT International Production 1000</span></li>
+                    <li><span class="raceFilter" id="senior"><div class="raceFilterBox"></div> Senior TT</span></li>
+                    <li><span class="raceFilter" id="sidecara"><div class="raceFilterBox"></div> TT Sidecar Race A</span></li>
+                    <li><span class="raceFilter" id="sidecarb"><div class="raceFilterBox"></div> TT Sidecar Race B</span></li>
+                    <li><span class="raceFilter" id="singles"><div class="raceFilterBox"></div> TT Singles</span></li>
+                    <li><span class="raceFilter" id="superbike"><div class="raceFilterBox"></div> TT Superbike</span></li>
+                    <li><span class="raceFilter" id="supersporta"><div class="raceFilterBox"></div> TT Supersport Race A</span></li>
+                    <li><span class="raceFilter" id="supersportb"><div class="raceFilterBox"></div> TT Supersport Race B</span></li>
+                    <li><span class="raceFilter" id="superstock"><div class="raceFilterBox"></div> TT Superstock</span></li>
+                    <li><span class="raceFilter" id="ultralightweight"><div class="raceFilterBox"></div> TT Ultra Lightweight 125</span></li>
+                    <li><span class="raceFilter" id="zero"><div class="raceFilterBox"></div> TTXGP</span></li>
+                </ul>
+
+            </div>
+
+<code>ul{
+  width:760px;
+  margin-bottom:20px;
+  overflow:hidden;
+  border-top:1px solid #ccc;
+}
+li{
+  line-height:1.5em;
+  border-bottom:1px solid #ccc;
+  float:left;
+  display:inline;
+}
+id double li  { width:50%;} <span class="code-comment">  // 2 col
+
+
+
+ul{
+	width:760px;
+	margin-bottom:20px;
+	overflow:hidden;
+	border-top:1px solid #ccc;
+}
+li{
+	line-height:1.5em;
+	border-bottom:1px solid #ccc;
+	float:left;
+	display:inline;
+}
+#double li	{ width:50%;}
 */
+
+
+div#raceClassFilter ul {
+    margin-top: 10px;
+    list-style: none;
+    width: 400px;
+    overflow:hidden;
+    /*
+    border-top:1px solid #ccc;
+    border: 2px solid black;
+    */
+}
+    div#raceClassFilter ul li {
+        width: 50%;
+        float:left;
+        display:inline;
+        margin-bottom: 5px;
+    }
 
 .raceFilterBox {
     border: 1px solid black;
     width: 15px;
     height: 15px;
+    margin-right: 3px;
+    width: 10px;
+    height: 10px;
     float: left;
     clear: both;
 }
+
+
+
+
+
+
+
+
 
 #viz {
     border: 1px solid black;
@@ -64,15 +129,15 @@ aside {
 }
 
     #viz-filters {
-        min-height: 175px;
-        height: 200px;
+        /*min-height: 175px;*/
+        /*height: 200px;*/
         padding: 10px;
     }
 
     #riderInfo {
         margin-top: 0;
-        min-height: 450px;
-        height: 550px;
+        min-height: 650px;
+        height: 750px;
         padding: 10px;
         overflow-y: scroll;
         overflow: -moz-scrollbars-vertical;
@@ -141,18 +206,8 @@ hr {
 }
 
 .y {
-
     color: red;
 }
-
-/* this just makes all the tick marks bolder */
-/*
-.axis{
-    stroke: black;
-    stroke-width: 1.5px;
-}
-*/
-
 
 .line {
     fill: none;
@@ -186,22 +241,22 @@ hr {
 .color-unselected { stroke: #ccc; }
 
 
-.color1, .formulaone  { stroke: blue; }
-.color2, .junior      { stroke: blueviolet; }
-.color3, .lightweight { stroke: brown; }
-/*.color4 { stroke: burlywood; }*/
-.color4, .production  { stroke: brown; }
-.color5, .senior { stroke: cadetblue; }
-.color6, .sidecara { stroke: chartreuse; }
-.color7, .sidecarb { stroke: chocolate; }
-.color8, .singles { stroke: orange; }
-.color9, .superbike { stroke: orangered; }
-.color10, .supersporta { stroke: olive; }
-.color11, .supersportb { stroke: lawngreen; }
-/*.color12 { stroke: lightblue; }*/
-.color12, .superstock { stroke: darkblue; }
-.color13, .ultralightweight { stroke: gray; }
-.color14, .zero { stroke: indigo; }
+.color1, .formulaone  { stroke: blue; background-color: blue; }
+.color2, .junior      { stroke: blueviolet; background-color: blueviolet; }
+.color3, .lightweight { stroke: brown; background-color: brown; }
+/*.color4 { stroke: burlywood; background-color: burlywood; }*/
+.color4, .production  { stroke: brown; background-color: brown; }
+.color5, .senior { stroke: cadetblue; background-color: cadetblue; }
+.color6, .sidecara { stroke: chartreuse; background-color: chartreuse; }
+.color7, .sidecarb { stroke: chocolate; background-color: chocolate; }
+.color8, .singles { stroke: orange; background-color: orange; }
+.color9, .superbike { stroke: orangered; background-color: orangered; }
+.color10, .supersporta { stroke: olive; background-color: olive; }
+.color11, .supersportb { stroke: lawngreen; background-color: lawngreen; }
+/*.color12 { stroke: lightblue; background-color: lightblue; }*/
+.color12, .superstock { stroke: darkblue; background-color: darkblue; }
+.color13, .ultralightweight { stroke: gray; background-color: gray; }
+.color14, .zero { stroke: indigo; background-color: indigo; }
 
 
 .race-line-tooltip {
@@ -224,7 +279,6 @@ hr {
     padding: 5px;
 }
 
-
 .speed-circle {
     color: red;
     fill: red;
@@ -232,15 +286,8 @@ hr {
 }
 .speed-circle-text {
     color: black;
-    /*font-size: 0.55em;*/
-    /*font-size: 6px;*/
     font-size: 7pt;
-    /*
-    margin-left: -25px;
-    padding-left: -25px;
-    */
 }
-
 
 .rider-detail-graphs {
     /*background-color: green;*/
