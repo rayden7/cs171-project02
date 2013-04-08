@@ -164,6 +164,12 @@ ul#main-nav {
     top: 0;
 }
 
+.svg-img-floatleft {
+    float: left;
+    clear: both;
+    margin: 0 15px 15px 5px;
+}
+
 
 
 #main-nav li {

@@ -1,12 +1,12 @@
 /*cs171-project02
-    ===============
+ ===============
 
-CS171 Project 2, Team Data Visualization for the Isle of Man TT
+ CS171 Project 2, Team Data Visualization for the Isle of Man TT
 
-Team Members:
-    David Killeffer <rayden7@gmail.com>
-    Leo Mejia <kolopaisa@gmail.com>
-*/
+ Team Members:
+ David Killeffer <rayden7@gmail.com>
+ Leo Mejia <kolopaisa@gmail.com>
+ */
 
 
 // save the races dataset here, so that we can refer to it outside of the loading function
@@ -183,8 +183,9 @@ var allRaceClasses = raceClasses;
 // declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
     width = 1050 - margin.left - margin.right,
-    //height = 750 - margin.top - margin.bottom;
-    height = 250 - margin.top - margin.bottom;
+    height = 750 - margin.top - margin.bottom;
+    //height = 250 - margin.top - margin.bottom;
+    //height = 450 - margin.top - margin.bottom;
 
 ///// declare the margins, width, and height for the TERTIARY RIDER INFO visualization(s)
 
@@ -208,53 +209,48 @@ var margin4 = margin3, width4 = width3, height4 = height3;
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg = d3.select("#viz").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg2 = d3.select("#viz")
-             .append("svg")
-             .attr("width", width2 + margin2.left + margin2.right)
-             .attr("height", height2 + margin2.top + margin2.bottom)
-             .append("g")
-             .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+    .append("svg")
+    .attr("width", width2 + margin2.left + margin2.right)
+    .attr("height", height2 + margin2.top + margin2.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg3 = d3.select("#viz")
-            .append("svg")
-            .attr("width", width3 + margin3.left + margin3.right)
-            .attr("height", height3 + margin3.top + margin3.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
+    .append("svg")
+    .attr("width", width3 + margin3.left + margin3.right)
+    .attr("height", height3 + margin3.top + margin3.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg4 = d3.select("#viz")
-            .append("svg")
-            .attr("width", width4 + margin4.left + margin4.right)
-            .attr("height", height4 + margin4.top + margin4.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
-
+    .append("svg")
+    .attr("width", width4 + margin4.left + margin4.right)
+    .attr("height", height4 + margin4.top + margin4.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
 
 
 
 // later we will be appending rider race class race performance lines to this element
 var g = d3.select("g");
 
-// later we will be appending rider race class race performance lines to this element
+// this will be for the first small sub-visualization below the main graph
 var g2 = svg2.select("g");
 
-// later we will be appending rider race class race performance lines to this element
+// this will be for the second small sub-visualization below the main graph
 var g3 = svg3.select("g");
 
-// later we will be appending rider race class race performance lines to this element
+// this will be for the third small sub-visualization below the main graph
 var g4 = svg4.select("g");
-
-
-
-
 
 
 
@@ -270,36 +266,36 @@ window.onload = function() {
     // NOTE: we are initially declaring our X and Y axes because we want to use custom labels,
     // and we are intimately familiar with the dataset, so we know the ranges for each
     var xAxis = d3.svg.axis()
-                      .scale(x)
-                      .tickValues([
-                          new Date(1991,0), new Date(1992,0), new Date(1993,0), new Date(1994,0), new Date(1995,0),
-                          new Date(1996,0), new Date(1997,0), new Date(1998,0), new Date(1999,0), new Date(2000,0),
-                          new Date(2001,0), new Date(2002,0), new Date(2003,0), new Date(2004,0), new Date(2005,0),
-                          new Date(2006,0), new Date(2007,0), new Date(2008,0), new Date(2009,0), new Date(2010,0),
-                          new Date(2011,0), new Date(2012,0)
-                      ])
-                      .orient("bottom");
+        .scale(x)
+        .tickValues([
+        new Date(1991,0), new Date(1992,0), new Date(1993,0), new Date(1994,0), new Date(1995,0),
+        new Date(1996,0), new Date(1997,0), new Date(1998,0), new Date(1999,0), new Date(2000,0),
+        new Date(2001,0), new Date(2002,0), new Date(2003,0), new Date(2004,0), new Date(2005,0),
+        new Date(2006,0), new Date(2007,0), new Date(2008,0), new Date(2009,0), new Date(2010,0),
+        new Date(2011,0), new Date(2012,0)
+    ])
+        .orient("bottom");
 
     var yAxis = d3.svg.axis()
-                      .scale(y)
-                      .tickValues([1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,70,71,72])
-                      .tickFormat(function(d) {
-                          if (isNaN(d)) {
-                              return d.toString();
-                          } else {
-                              return d;
-                          }
-                      })
-                      .orient("left");
+        .scale(y)
+        .tickValues([1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,24,28,32,36,40,44,48,52,56,60,64,68,70,71,72])
+        .tickFormat(function(d) {
+            if (isNaN(d)) {
+                return d.toString();
+            } else {
+                return d;
+            }
+        })
+        .orient("left");
 
     var line = d3.svg.line()
-                     .x(function(d) { return x(d.Year); })
-                     .y(function(d) { return y(d.Position); });
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Position); });
 
     var lineClosed = d3.svg.line()
-                           .x(function(d) { return x(d.Year); })
-                           .y(function(d) { return y(d.Position); })
-                           .defined(function(d){ return (d.x !== null && d.y !== null); });
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Position); })
+        .defined(function(d){ return (d.x !== null && d.y !== null); });
 
 
     //****************************************************************************************************************//
@@ -397,9 +393,11 @@ window.onload = function() {
              race is not part of a longer-running, year-over-year series and so we can't show rider position placement
              year-over-year, etc.
 
-            */
+             */
             // only add race data for the races not on the list of ones ot exlude
-            if (racesToExclude.indexOf(d.RaceName) == -1) {
+
+
+            //if (racesToExclude.indexOf(d.RaceName) == -1) {
                 dataset.push({
                     RiderID: +d.RiderID,  // parse the RiderID as a number
                     RaceName: d.RaceName,
@@ -414,7 +412,7 @@ window.onload = function() {
                     Speed: +d.Speed, // parse the Speed as a number
                     RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
                 });
-            }
+            //}
         });
 
 
@@ -476,6 +474,8 @@ window.onload = function() {
         // go from last place (72nd place is reserved for "DNF" - did not finish - records, all the way up to first place)
         y.domain([dnfPlace, 1]);
 
+
+
         // draw the X-axis indicating the year the races were held (note that in 2001 the TT was cancelled due to
         // the Foot & Mouth Disease outbreak (see: http://www.iomtt.com/TT-Database/Events.aspx?meet_code=TT01)
         svg.append("g")
@@ -488,19 +488,6 @@ window.onload = function() {
             .attr("dx", ".71em")
             .style("text-anchor", "end")
             .text("Year");
-
-        // draw the Y-axis denoting race position, and also draw tick marks
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -40)
-            .attr("x", -(height / 2))
-            .attr("dy", ".71em")
-            .text("Race Position");
-
-        yAxis.ticks(dnfPlace);
 
 
         redrawRaceLines();
@@ -529,23 +516,54 @@ window.onload = function() {
                     .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
                     .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
                     .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
-                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
-                    //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
+                //.entries( dataset.filter(function(d) { return d.RaceClass == raceClasses[raceClass]; }) );
+                //.entries( dataset.filter(function(d) { return (d.RaceClass === "supersporta" || d.RaceClass === "supersportb"); }) );
+                //.entries( dataset.filter(function(d) { return (d.RaceType === "supersporta" || d.RaceType === "supersportb"); }) );
+                //.entries( dataset.filter(function(d) { return d.RaceType === raceClasses[raceClass] || d.RaceClass === raceClasses[raceClass]; }) );
+                //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
+                //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
 
                 raceClassRecords.forEach(function(idx) {
                     idx.values.forEach(function(innerIdx) {
                         g.append("svg:path")
-                         .datum( innerIdx.values )
-                         .attr("class", "race-line "+innerIdx.key)
-                         .attr("d", lineClosed)
-                         .on("mouseover", raceLineMouseOver )
-                         .on("mouseout", raceLineMouseOut );
+                            .datum( innerIdx.values )
+                            .attr("class", "race-line "+innerIdx.key)
+                            .attr("d", lineClosed)
+                            .on("mouseover", raceLineMouseOver )
+                            .on("mouseout", raceLineMouseOut );
                     });
                 });
 
             }
         }
 
+
+
+        // draw the X-axis indicating the year the races were held (note that in 2001 the TT was cancelled due to
+        // the Foot & Mouth Disease outbreak (see: http://www.iomtt.com/TT-Database/Events.aspx?meet_code=TT01)
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("x", width / 2)
+            .attr("y", 35)
+            .attr("dx", ".71em")
+            .style("text-anchor", "end")
+            .text("Year");
+
+        // draw the Y-axis denoting race position, and also draw tick marks
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -40)
+            .attr("x", -(height / 2))
+            .attr("dy", ".71em")
+            .text("Race Position");
+
+        yAxis.ticks(dnfPlace);
 
 
 
@@ -557,6 +575,8 @@ window.onload = function() {
             // get the name of the currently selected race class
             var raceClassToFilter = this.children[0].id;
 
+            console.log(raceClassToFilter);
+
             //alert("you clicked on a race class filter!   raceClassToFilter: ["+raceClassToFilter+"]");
 
             // filter the dataset
@@ -564,16 +584,20 @@ window.onload = function() {
             var newRaceClass = allRaceClasses[raceClassToFilter];
             //raceClasses = [raceClasses.raceClassToFilter];
             //raceClasses = newRaceClass;
-            raceClasses = { raceClassToFilter :  newRaceClass  };
 
+            // MOSTLY works, but doesn't filter out SidecarA, SidecarB,
             /*
-             var raceClassRecords = d3.nest()
-             .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
-             .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
-             .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
-             //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
-             //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
-            */
+             races not filtering properly
+             TT Sidecar Race B
+             TT Supersport Race A
+             TT Supersport Race B
+             TT Ultra Lightweight 125
+
+             races filtering weirdly
+             TT Lightweight (seems to show 2 classes??)
+             */
+            raceClasses = { raceClassToFilter :  newRaceClass  };
+            //raceClasses[raceClassToFilter] = newRaceClass;
 
             redrawRaceLines();
 
@@ -588,67 +612,52 @@ window.onload = function() {
 
 function drawRiderDetailGraphs(d, i) {
 
+    // show the line graph of rider speed
     {
+        var padding = 30;
+        var w = width2 - padding;
+        var h = height2;
 
-    var padding = 30;
-    var w = width2 - padding;
-    var h = height2;
+        // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
+        var lineScalex = d3.time.scale()
+            .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+            //.domain(d3.time.years(d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; }), 1))
+            //.domain(d3.time.years(d3.min(d, function(d){ return d.Year.getFullYear(); }), d3.max(d, function(d){ return d.Year.getFullYear(); }), 1))
+            .range([padding, w ]);
 
-    // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
-    var lineScalex = d3.time.scale()
-                        .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
-                        //.domain(d3.time.years(d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; }), 1))
-                        //.domain(d3.time.years(d3.min(d, function(d){ return d.Year.getFullYear(); }), d3.max(d, function(d){ return d.Year.getFullYear(); }), 1))
-                        .range([padding, w ]);
+        var xDomain = d3.extent(d, function(d){ return d.Year; });
 
-    var xDomain = d3.extent(d, function(d){ return d.Year; });
+        var lineXAxis = d3.svg.axis()
+            .scale(lineScalex)
+            .orient("bottom");
 
-    var lineXAxis = d3.svg.axis()
-                        .scale(lineScalex)
-                        .orient("bottom");
+        // https://github.com/mbostock/d3/wiki/Time-Intervals#wiki-year
+        //
+        // d3.time.years(start, stop[, step])
+        // Alias for d3.time.year.range. Returns the year boundaries (midnight January 1st) after or equal to start
+        // and before stop. If step is specified, then every step'th year will be returned. For example, a
+        // step of 5 will return 2010, 2015, 2020, etc.
 
-// https://github.com/mbostock/d3/wiki/Time-Intervals#wiki-year
-//
-// d3.time.years(start, stop[, step])
-// Alias for d3.time.year.range. Returns the year boundaries (midnight January 1st) after or equal to start
-// and before stop. If step is specified, then every step'th year will be returned. For example, a
-// step of 5 will return 2010, 2015, 2020, etc.
+        var lineScaley = d3.scale.linear()
+            .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
+            .range([h - padding, padding]);
 
-    var lineScaley = d3.scale.linear()
-                        .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
-                        .range([h - padding, padding]);
+        var lineYAxis = d3.svg.axis()
+            .scale(lineScaley)
+            .orient("left")
+            .ticks(5);
 
-    var lineYAxis = d3.svg.axis()
-                        .scale(lineScaley)
-                        .orient("left")
-                        .ticks(5);
+        var line2 = d3.svg.line()
+            .x(function(d) { return lineScalex(d.Year); })
+            .y(function(d) { return lineScaley(d.Speed); });
 
-    var line2 = d3.svg.line()
-                        .x(function(d) { return lineScalex(d.Year); })
-                        .y(function(d) { return lineScaley(d.Speed); });
+        ////////////// GOOD UP TO HERE //////////////
 
-
-
-    ////////////// GOOD UP TO HERE //////////////
-
-    // draw the line chart
-    //svg2.append("svg:path")
-    svg2.append("path")
-        //.datum( d )
-        //.datum( [d] )
-        //.data( [d] )
-        .data( d )
-        .attr("class", "speed-line")
-        //.attr("d", line2(d))
-        .attr("d", line2 );
-        //.attr("transform", "translate(0," + (h - padding) + ")");
-
-
-
-
-
-
-
+        // draw the line chart
+        svg2.append("path")
+            .data( d )
+            .attr("class", "speed-line")
+            .attr("d", line2 );
 
         svg2.append("g")
             .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
@@ -669,144 +678,100 @@ function drawRiderDetailGraphs(d, i) {
             .attr("y", -32)
             .attr("x", -(h/3)*2)
             .text("Avg. Speed");
-
-
-
-
-
-//    g2.append("svg:path")
-//      .datum( d )
-//      .attr("class", "speed-line")
-//      .attr("d", line2);
-//
-//    g2.append("path")
-//      .datum( d )
-//      .attr("class", "speed-line")
-//      .attr("d", line2);
-//
-//    g.append("svg:path")
-//     .datum( d )
-//     .attr("class", "speed-line")
-//     .attr("d", line2);
-
-//
-//    //var city = svg2.selectAll(".speed-line")
-//    var city = g2.selectAll(".speed-line")
-//        .data( d )
-//        .enter().append("g");
-//        //.enter().append("path")
-//        //.attr("class", "speed-line");
-//
-//    city.append("path")
-//        .data( d )
-//        .enter().append("g")
-//        .attr("class", "speed-line")
-//        //.attr("d", function(d) { return line2(d); });
-//        .attr("d", d );
-//        //.style("stroke", function(d) { return color(d.name); });
-//
-//    var city = g2.selectAll(".speed-line")
-//        //.data( d )
-//        .enter().append("g")
-//            //.append("path")
-//        .data( d )
-//        .enter().append("svg:path")
-//        .attr("class", "speed-line")
-//        .attr("d", d );
-
-
-
     }
 
 
+     // show a bar chart indicating how many times the rider has finished in a given position for the
+     // currently moused-over race class
+     {
+         var padding = 30;
+         var w = width2 - padding;
+         var h = height2;
+         var barPadding = 2;
 
-    // show a bar chart indicating how many times the rider has finished in a given position for the
-    // currently moused-over race class
-    {
-        var padding = 30;
-        var w = width2 - padding;
-        var h = height2;
-        var barPadding = 2;
+         var dFiltered = d3.nest()
+                             .key(function(d) { return d.Position })
+                             .sortKeys(d3.ascending)
+                             .rollup(function (d) {
+                                 return {
+                                     Times: (d.length),
+                                     Name:  d3.min(d, function(g) {return g.Rider1}),
+                                     Position: d3.min(d, function(g) {return g.Position}),
+                                     Year: d3.min(d, function(g) {return g.Year})
+                                 }
+                             })
+                             .entries(d);
 
-        var dFiltered = d3.nest()
-            .key(function(d) { return d.Position }).sortKeys(d3.ascending)
-            .rollup(function (d) {
-                return {
-                    Times: (d.length),
-                    Name:  d3.min(d, function(g) {return g.Rider1}),
-                    Position: d3.min(d, function(g) {return g.Position}),
-                    Year: d3.min(d, function(g) {return g.Year})
-                }
-            })
-            .entries(d);
+         var barScaleX = d3.time.scale()
+                             .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
+                             .range([padding, w ]);
 
-        var barScaleX = d3.time.scale()
-                            .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
-                            .range([padding, w ]);
+         var barScaleY = d3.scale.linear()
+                             .domain([0, d3.max(dFiltered, function(d) { return d.values.Times; })])
+                             .range([h, padding]);
 
-        var barScaleY = d3.scale.linear()
-                           .domain([0, d3.max(dFiltered, function(d) { return d.values.Times; })])
-                           .range([h, padding]);
+         var barScaleY2 = d3.scale.linear()
+                             .domain([d3.max(dFiltered, function(d) { return d.values.Times; }), 0])
+                             .range([h - padding, 0]);
 
-        var barScaleY2 = d3.scale.linear()
-                           .domain([d3.max(dFiltered, function(d) { return d.values.Times; }), 0])
-                           .range([h - padding, 0]);
-
-        var barXAxis = d3.svg.axis()
+         var barXAxis = d3.svg.axis()
                              .scale(barScaleX)
                              .orient("bottom");
 
-        var barYAxis = d3.svg.axis()
-                            .scale(barScaleY)
-                            .orient("left");
-                            //.ticks(5);
+         var barYAxis = d3.svg.axis()
+                             .scale(barScaleY)
+                             .orient("left");
+                             //.ticks(5);
 
-        svg3.selectAll("rect")
-            .data(dFiltered)
-            .enter()
-            .append("rect")
-            .attr("fill", "teal")
-            //.attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 1; })
-            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.length) + padding + 1; })
+         svg3.selectAll("rect")
+                 .data(dFiltered)
+                 .enter()
+                 .append("rect")
+                 .attr("fill", "teal")
+                 //.attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 1; })
+                 .attr("x", function(d, i) { return i*((w - padding) / dFiltered.length) + padding + 1; })
 
-            //.attr("y", function(d) { return  h -(barScaleY2(d.values.Times)); } )
-            .attr("y", function(d) { return  h -(barScaleY2(dFiltered.Times)); } )
-            //.attr("width", (w  - (padding * 3))/ dFiltered.values.length - barPadding)
-            .attr("width", (w  - (padding * 3))/ d.length - barPadding)
-            //.attr("height", function(d) { return barScaleY2(d.values.Times + padding); })
-            //.attr("height", function(d) { return barScaleY2(dFiltered.Times + padding); })
-            //.attr("height", function(d,i) { return barScaleY2(dFiltered[i].Times + padding); })
-            .attr("height", function(d,i) {
+                 //.attr("y", function(d) { return  h -(barScaleY2(d.values.Times)); } )
+                 .attr("y", function(d) { return  h -(barScaleY2(dFiltered.Times)); } )
+                 //.attr("width", (w  - (padding * 3))/ dFiltered.values.length - barPadding)
+                 .attr("width", (w  - (padding * 3))/ d.length - barPadding)
+                 //.attr("height", function(d) { return barScaleY2(d.values.Times + padding); })
+                 //.attr("height", function(d) { return barScaleY2(dFiltered.Times + padding); })
+                 //.attr("height", function(d,i) { return barScaleY2(dFiltered[i].Times + padding); })
+                 .attr("height", function(d,i) {
 
-                //var numTimes = dFiltered[i].values.Times;
-                var numTimes = d.values.Times;
+                     //var numTimes = dFiltered[i].values.Times;
+                     var numTimes = d.values.Times;
 
-                console.log("numTimes: ["+numTimes+"]");
+                     console.log("numTimes: ["+numTimes+"]");
 
-                var curHeight = barScaleY2(numTimes + padding);
-                //var curHeight = barScaleY(numTimes + padding);
-                //var barHeight = barScaleY2(curHeight);
-                return curHeight;
-            })
-            .attr("class", "rider-detail-graphs");
-        /*
-        svg3.selectAll("text")
-            .data(dFiltered)
-            .enter()
-            .append("text")
-            .text(function(d) { if (d.values.Position == 72) return "DNF"; else return d.values.Position; })
-            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 15; })
-            .attr("y", function(d) { return  h - padding  - 2 ; })
+                     var curHeight = barScaleY2(numTimes + padding);
 
-            .attr("class", "rider-detail-graphs")
+                    //var curHeight = barScaleY(numTimes + padding);
+                    //var barHeight = barScaleY2(curHeight);
+                    return curHeight;
+                  })
+                  .attr("class", "rider-detail-graphs");
 
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "11x")
-            .attr("font-weight", "bold")
-            .attr("text-anchor", "middle")
-            .attr("fill", "black");
-            */
-    }
+         //        svg3.selectAll("text")
+         //            .data(dFiltered)
+         //            .enter()
+         //            .append("text")
+         //            .text(function(d) { if (d.values.Position == 72) return "DNF"; else return d.values.Position; })
+         //            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 15; })
+         //            .attr("y", function(d) { return  h - padding  - 2 ; })
+         //
+         //            .attr("class", "rider-detail-graphs")
+         //
+         //            .attr("font-family", "sans-serif")
+         //            .attr("font-size", "11x")
+         //            .attr("font-weight", "bold")
+         //            .attr("text-anchor", "middle")
+         //            .attr("fill", "black");
+
+     }
+
+
 
     // show a graph with dots corresponding to the rider's average speed for races where they placed in positions
     // 1-5; the relative size of the circle corresponds to their fastest lap speed
@@ -853,7 +818,7 @@ function drawRiderDetailGraphs(d, i) {
                 .attr("r", function(d){ return scatterScaleR(Math.ceil(d.Speed)); });
 
             svg4.selectAll("text")
-               .data(d).enter()
+                .data(d).enter()
                 .append("text")
                 .text(function(d) { return Math.ceil(d.Speed); })
                 .attr("class", "rider-detail-graphs speed-circle-text")
@@ -920,7 +885,6 @@ function raceLineMouseOver (d, i) {
     // if we found the rider info in the riderDataset, build out the ASIDE detailed info on the rider
     if ( riderInfo !== null && riderInfo.length === 1) {
         var riderInfoHTML = "<h2><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+"</a></h2>\n";
-        //riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">"+riderInfo[0].RiderName+" TT Database link</a></p><br />\n";
         riderInfoHTML += "<p><a href=\""+ riderInfo[0].TTDatabaseWebpage +"\">TT Database rider profile</a></p><br />\n";
 
         // clean and show the rider biography
@@ -936,14 +900,10 @@ function raceLineMouseOver (d, i) {
 
         // show any rider pictures we found
         if (
-        //(riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) ||
             (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) ||
-                (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0)
-            ) {
+            (riderInfo[0].Picture3 !== null && riderInfo[0].Picture3.length > 0)
+        ) {
             riderInfoHTML += "<hr />\n";
-            //if (riderInfo[0].Picture1 !== null && riderInfo[0].Picture1.length > 0) {
-            //    riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture1+"\" title=\""+riderInfo[0].RiderName+"\ picture 1\" />\n";
-            //}
             if (riderInfo[0].Picture2 !== null && riderInfo[0].Picture2.length > 0) {
                 riderInfoHTML += "<img class=\"riderPics\" src=\""+riderInfo[0].Picture2+"\" title=\""+riderInfo[0].RiderName+"\ picture 2\" />\n";
             }
@@ -993,7 +953,6 @@ function raceLineMouseOver (d, i) {
     // highlight the race line by making it have a thicker line stroke and color it darkly
     d3.select(this).attr("class","race-line-selected colorSelected");
 
-
     drawRiderDetailGraphs(d, i);
 
     return 0;
@@ -1021,16 +980,18 @@ function raceLineMouseOut (d, i) {
 
 
 function getRaceClass(raceName) {
-    for (var raceKey in raceClasses) {
-        //if (raceName.toLowerCase().indexOf(raceKey) > -1) {
+    //for (var raceKey in raceClasses) {
+    for (var raceKey in allRaceClasses) {
         var regex = new RegExp(raceKey, "ig");
         raceName = raceName.replace(/\s+/g, '');  // remove spaces from the race name so we can perform regex matches against the raceClasses which have no spaces
 
         if (raceName.match(regex)) {
-            return raceClasses[raceKey];
+            //return raceClasses[raceKey];
+            return allRaceClasses[raceKey];
         }
         else if (raceName.toLowerCase() == "tt 2002 iom steam pckt  250cc results") {
-            return raceClasses["lightweight"];
+            //return raceClasses["lightweight"];
+            return allRaceClasses["lightweight"];
         }
     }
     return null;  // race class not found
@@ -1069,59 +1030,3 @@ function getRaceClassLineStyle(raceClass) {
             return "color14";
     }
 }
-
-
-
-
-function showRaceClassFilters() {
-
-    /*
-    <!--<p>this is where the race class filters will go</p>-->
-
-        <h3>Race Classes</h3>
-        <div id="raceClassFilter"></div>
-    */
-
-
-    // blank out any existing race class filters
-    $("#raceClassFilter").html("");
-
-
-    $("#raceClassFilter").appendChild("ul");
-
-
-
-    // loop over each of the raceClasses, filter the dataset to get just riders in each class,
-    // then draw all the race lines for the specified class
-    for (var raceClass in raceClasses) {
-
-        //console.log("current race class: ["+raceClass+"]");
-
-        // filter out each race and group them first by unique rider, then by race type, and finally,
-        // restrict the dataset to be only for that specified RaceClass
-        //var raceClassRecords = d3.nest()
-        //    .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
-        //    .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
-        //    .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
-
-
-
-
-
-        raceClassRecords.forEach(function(idx) {
-            idx.values.forEach(function(innerIdx) {
-                g.append("svg:path")
-                    .datum( innerIdx.values )
-                    //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
-                    .attr("class", "race-line "+innerIdx.key)
-                    .attr("d", lineClosed)
-                    .on("mouseover", raceLineMouseOver )
-                    .on("mouseout", raceLineMouseOut );
-            });
-        });
-
-
-    }
-
-}
-
