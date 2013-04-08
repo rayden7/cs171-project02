@@ -175,6 +175,8 @@ var raceClasses = {
     }
 };
 
+var allRaceClasses = raceClasses;
+
 
 ///// declare the margins, width, and height for the PRIMARY race line visualization
 
@@ -534,7 +536,6 @@ window.onload = function() {
                     idx.values.forEach(function(innerIdx) {
                         g.append("svg:path")
                          .datum( innerIdx.values )
-                         //.attr("class", "race-line "+getRaceClassLineStyle(innerIdx.key))
                          .attr("class", "race-line "+innerIdx.key)
                          .attr("d", lineClosed)
                          .on("mouseover", raceLineMouseOver )
@@ -545,6 +546,38 @@ window.onload = function() {
             }
         }
 
+
+
+
+
+
+        // RACE CLASS filtering
+        $("#raceClassFilter ul li").click(function(e){
+
+            // get the name of the currently selected race class
+            var raceClassToFilter = this.children[0].id;
+
+            //alert("you clicked on a race class filter!   raceClassToFilter: ["+raceClassToFilter+"]");
+
+            // filter the dataset
+            var newRaceClass = raceClasses[raceClassToFilter];
+            //raceClasses = [raceClasses.raceClassToFilter];
+            //raceClasses = newRaceClass;
+            raceClasses = newRaceClass;
+
+            /*
+             var raceClassRecords = d3.nest()
+             .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
+             .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
+             .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
+             //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
+             //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
+            */
+
+            redrawRaceLines();
+
+            return 0;
+        });
 
     });
 
