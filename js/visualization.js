@@ -563,7 +563,7 @@ window.onload = function() {
             var newRaceClass = raceClasses[raceClassToFilter];
             //raceClasses = [raceClasses.raceClassToFilter];
             //raceClasses = newRaceClass;
-            raceClasses = newRaceClass;
+            raceClasses = { raceClassToFilter :  newRaceClass  };
 
             /*
              var raceClassRecords = d3.nest()
