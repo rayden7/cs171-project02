@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/html">
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
 <meta charset="utf-8">
 <head>
     <title>The Isle of Man TT - How Long Does It Take To Becoming Proficient?</title>
@@ -14,53 +16,139 @@
     <script src="js/jquery-1.9.1.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>The Isle of Man TT</h1>
-        <!-- This is for the menus -->
-        <ul id="main-nav">
-            <li><a href="index.html">Main</a></li>
-            <li><a href="races.html">Races</a></li>
-            <!-- commenting out individual riders for now, we may bring it back on Project 3 -->
-            <!--<li><a href="riders.html">Riders</a></li>-->
-            <li><a href="maps.html">Maps</a></li>
-            <li><a href="credits.html">Credits</a></li>
-            <li><a href="about.html">About</a></li>
+<header>
+    <img class="tt-img tt-img-floatleft" src="img/iomtt-logo-smaller.png" />
+    <h1>The Isle of Man TT</h1>
+    <!-- This is for the menus -->
+    <ul id="main-nav">
+        <li><a href="index.html">Main</a></li>
+        <li><a href="races.html">Races</a></li>
+        <li><a href="maps.html">Maps</a></li>
+        <li><a href="credits.html">Credits</a></li>
+        <li><a href="about.html">About</a></li>
+    </ul>
+    <img class="tt-img tt-img-floatright" src="img/iomtt-logo-smaller.png" />
+</header>
+
+<article>
+
+    <div id="viz-info">
+
+        <h2>About</h2>
+
+        <p>Our project comes about from a fascination with the incredibly brave and talented men (and women!) racers
+            that continue to show up every year at the Isle of Man TT and challenge world records, personal bests, and
+            each other.  After watching several documentaries about the annual TT races (including those already
+            mentioned on the <a href="index.html">main page</a>,
+            <a href="http://www.imdb.com/title/tt1698010/?ref_=fn_al_tt_1">TT3D: Closer To The Edge</a> and the BBC
+            ITV4 documentary
+            <a href="http://www.touchline.tv/tv/motorsport/manx-grand-prix-documentary-on-itv4">Grand Prix Racer</a>)
+            David was inspired to see if he could do some interesting visualizations on rider performance, learn more
+            about how long it takes riders to become proficient on the <a href="maps.html">Snaefell Mountain Course</a>,
+            and also create some really fun and interactive visualizations of the rich dataset that the official
+            <a href="http://www.iomtt.com/TT-Database.aspx">Isle of Man TT Database website</a> provides (particularly
+            because the official database website is primarily a relatively flat, boring dump of "numbers in tables"
+            kind of datadump, it was ripe for being the datasource for visualizing).</p><br />
+        <p>After David and Leo teamed up to work on the project, we were both also inspired by the example provided in
+            the <a href="[LINK TO OFFICIAL PROJECT 2 PDF SPEC HERE]">Project II</a> project document of "A good
+            multi-view example" of the <a href="http://cscheid.net/static/mlb­hall­of­fame­voting/">MLB Hall of Fame
+            Voting</a>, where it showed lines for each player and showed how many votes they received each year until
+            they reached (or in several cases, did not reach) enough votes to gain entry into the MLB Hall of Fame.
+            We felt that a graph like this for our Isle of Man TT rider and race data would be a neat way to visualize
+            how a rider has performed in the TT races over the years, and give us insight into our primary research
+            question, which is <b><i>"How long does it take most riders to become proficient at the Isle of Man
+            TT?"</i></b></p><br />
+        <p>We felt that we should focus our analysis of the rich 100+ year history of the Isle of Man TT by focusing in
+            on the <a href="[LINK TO THE IOMTT DATABASE COMPETITITIONS 1991-PRESENT PAGE HERE]">modern era</a> of the
+            TT because the motorcycles used today are so vastly superior to those of earlier eras that the comparison
+            of older data to present-day data would not be fair (it is common for the best riders of today to reach
+            speeds in excess of 200 MPH on some of the straights at the <a href="maps.html">Snaefell Mountain
+            Course</a>.</p><br />
+
+        <p>To see the code we used to scrape the data from the TT Database and also the JavaScript / HTML / CSS
+            / jQuery / D3 code we used to create the primary visualization, see our
+            <a href="https://github.com/rayden7/cs171-project02">Project II Github repository</a>.</p><br />
+
+        <p>To read more about how we built out this visualization, see our Google Drive
+            <a href="https://docs.google.com/document/d/1PG95QfW0-YFx-HRjBAYC87QeIbOJeit_5cBa2nenG40/edit?usp=sharing">Project II Process Book</a>.</p><br /><br />
+
+
+        <h2>Software & Tools Used</h2>
+        <p>David is a "Mac guy", Leo is a "PC guy", but we were able to share several tools and applications on both
+            platforms.  Software, programming languages, toolkits, and services used to create this visualization:</p>
+
+        <ul class="left-margin-bump">
+            <li><a href="">JetBrains PyCharm</a></li>
+            <li><a href="">JetBrains WebStorm</a></li>
+            <li><a href="">Eclipse</a></li>
+            <li><a href="">D3</a></li>
+            <li><a href="">jQuery</a></li>
+            <li><a href="">HTML5</a></li>
+            <li><a href="">CSS</a></li>
+            <li><a href="">SVG</a></li>
+            <li><a href="">JavaScript</a></li>
+            <li><a href="">Python</a></li>
+            <li><a href="">Google Refine</a></li>
+            <li><a href="">Microsoft Excel</a></li>
+            <li><a href="">TextWrangler</a></li>
+            <li><a href="">Camtasia</a></li>
+            <li><a href="">Git</a></li>
+            <li><a href="">Github</a></li>
+            <li><a href="">Skype</a></li>
         </ul>
-    </header>
+        <br /><br />
 
-    <article>
+        <h2>Opportunities For Improvements on Project III</h2>
+        <p>While we are very proud of what we were able to accomplish in the short amount of time we had for
+            Project 2, and despite many very long hours of work, there are several areas that we would like to improve
+            upon for our upcoming Project 3 submission that would make this visualization even better:</p>
 
-        <!-- this is where the primary visualization will be rendered -->
-        <div id="viz"></div>
+        <ul class="left-margin-bump">
+            <li><span class="category-header">Individual Rider Filtering:</span> similar to how the MLB Hall of Fame
+                Voting visualization allows you to search for individuals by name, we would also like to be able to
+                search for individual racers by name and then show appropriate visualizations for the riders that
+                were found (or selected from a list)</li>
+            <li><span class="category-header">Animations & Transitions:</span> it would be nice to have smoothly
+                animating transitions when selecting different riders so that not all the interactivity is purely
+                ON / OFF when mousing over something</li>
+            <li><span class="category-header">Better Contexual Selections / Mouseovers:</span> when you mouseover a
+                racing line, it would be nice to have all the other lines have their opacity change so that the
+                primary visualization appears "less busy"</li>
+            <li><span class="category-header">"Sticky Rider Selections":</span> currently when you mouse over a rider's
+                racing line in the primary visualization, you are shown a very nice information panel on the rider on
+                the right, and you also get 2 or 3 nice smaller custom visualizations of the rider's race class
+                performance underneath the primary visualization; however, when you mouse out from that racing line
+                those areas go away, and so we don't really allow the viewer to play with or explore the rider detail
+                panel or the graphs below.  We would like to modify the primary visualization so that if you mouse over
+                and then click on a rider's racing line, that the rider detail panel and the smaller lower
+                visualizations "stick" so that the viewer can explore and play with those areas (in particular the
+                rider detail panel, because that one contains links for the rider to other websites, etc.).</li>
+            <li><span class="category-header">Rider Performance Comparisons:</span> one thing we would like to do to
+                make the visualization truly powerful would be to let you select 2 riders (perhaps more, but we would
+                need to explore this further) from a list (or simply allow selecting 2 different rider race lines)
+                and then show those riders primary race lines in two different colors on the primary visualization area
+                for easier visual comparison.</li>
+            <li><span class="category-header">All Rider Race Class Performances Shown:</span> currently you may mouse
+                over each race line, and each line represents how <b>one rider</b> has performed in all annual
+                competitions in <b>one race class</b>.  We would like to enable allowing the viewer to see highlighted
+                <b>all</b> of a currently-selected rider's race class performance lines (that would help to show if a
+                rider has a race class "speciality" compared to other race classes, for exmaple)</li>
+            <li><span class="category-header">Bugfix: Show Race Lines Moused Over Above All Other Race Lines:</span>
+                this is a tricky bug that we were unable to solve in time fo r Project 2, despite our best efforts</li>
 
-        <aside id="viz-filters">
-            <!--<p>this is where the race class filters will go</p>-->
+        </ul>
+        <br /><br />
 
-            <!--
-            <h3>Race Classes</h3>
-            <div id="raceClassFilter"></div>
+    </div>
+</article>
 
-            <hr />
-            <h3>TT Riders</h3>
-            <div id="riderFilter"></div>
-            -->
-        </aside>
+<footer>
+    <p>&copy; David Killeffer & Leo Mejia for CS 171 / CSCI-E 64 at Harvard Extension School, Spring 2013.</p>
+    <br />
+    <p>Want to see our code? Check out our <a href="https://github.com/rayden7/cs171-project02" target="_blank">Github</a> repo for everything!</p>
+</footer>
 
-        <!-- this is where detailed rider info will display when the user mouses over a race line -->
-        <aside id="riderInfo"></aside>
-
-        <div id="viz-info">
-            <p>this is where we will put text explaining our visualization</p>
-        </div>
-    </article>
-
-    <footer>
-        <p>&copy; David Killeffer & Leo Mejia for CS 171 / CSCI-E 64 at Harvard Extension School, Spring 2013.</p>
-        <br />
-        <p>Want to see our code? Check out our <a href="https://github.com/rayden7/cs171-project02" target="_blank">Github</a> repo for everything!</p>
-    </footer>
-
-    <!-- our custom code for creating the visualization -->
-    <script src="js/visualization.js"></script>
+<!-- our custom code for creating the visualization -->
+<script src="js/visualization.js"></script>
 </body>
 </html>
