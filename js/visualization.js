@@ -764,9 +764,10 @@ function drawRiderDetailGraphs(d, i) {
              .rangeRound([  h - padding,padding]);
 
          var barScalex = d3.scale.linear()
-                 .domain([d3.min(dGrouped[0].values, function(d){ return d.Position; }) , d3.max(dGrouped[0].values, function(d){ return d.Position;})])
-                 .range([padding, w - padding * 2]);
-
+                 .domain([d3.min(dGrouped[0].values, function(d){ return d.Position; })
+                 , d3.max(dGrouped[0].values, function(d){ return d.Position;})])
+                // .range([padding, w - padding - 10]);
+                 .range([padding, w ]);
          var barXAxis = d3.svg.axis()
              .scale(barScalex)
              .orient("bottom");
@@ -793,13 +794,23 @@ function drawRiderDetailGraphs(d, i) {
              .append("text")
              .text(function(d){ if ( d.values.Position == 72 ) return "DNF"; else return +d.values.Position; })
              .attr("x", function(d, i) { return i*((w - padding) / dGrouped[0].values.length) + padding + 15; })
-             .attr("y",function(d){ return  h - padding  - 2 ;} )
+             .attr("y",function(d){ return  h - padding + 13 ;} )
              .attr("class", "rider-detail-graphs")
              .attr("font-family", "sans-serif")
              .attr("font-size", "11x")
              .attr("font-weight", "bold")
              .attr("text-anchor", "middle")
              .attr("fill", "black");
+
+         svg3.append("g")
+             .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+             .attr("transform", "translate(0," + (h - padding) + ")")
+             .call(barXAxis)
+             .append("text")
+             .attr("x", w / 2)
+             .attr("y", 30)
+             .style("text-anchor", "end")
+             .text("Position");
 
          svg3.append("g")
              .attr("class", "axis rider-detail-graphs")
