@@ -183,7 +183,7 @@ var allRaceClasses = raceClasses;
 // declare the margins, width, and height of the primary visualization area
 var margin = {top: 20, right: 20, bottom: 50, left: 50},
     width = 1050 - margin.left - margin.right,
-    height = 750 - margin.top - margin.bottom;
+    height = 650 - margin.top - margin.bottom;
     //height = 250 - margin.top - margin.bottom;
     //height = 450 - margin.top - margin.bottom;
 
@@ -214,15 +214,6 @@ var svg = d3.select("#viz").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// translate the X and Y positions to make it easier to draw to the primary visualization area
-var svg2 = d3.select("#viz")
-    .append("svg")
-    .attr("width", width2 + margin2.left + margin2.right)
-    .attr("height", height2 + margin2.top + margin2.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-
-// translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg3 = d3.select("#viz")
     .append("svg")
     .attr("width", width3 + margin3.left + margin3.right)
@@ -231,12 +222,25 @@ var svg3 = d3.select("#viz")
     .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
 
 // translate the X and Y positions to make it easier to draw to the primary visualization area
+var svg2 = d3.select("#viz")
+    .append("svg")
+    .attr("width", width2 + margin2.left + margin2.right)
+    .attr("height", height2 + margin2.top + margin2.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
 var svg4 = d3.select("#viz")
     .append("svg")
     .attr("width", width4 + margin4.left + margin4.right)
     .attr("height", height4 + margin4.top + margin4.bottom)
     .append("g")
     .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
+
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+
+
+// translate the X and Y positions to make it easier to draw to the primary visualization area
+
 
 
 
@@ -615,20 +619,22 @@ function drawRiderDetailGraphs(d, i) {
     // show the line graph of rider speed
     {
         var padding = 30;
-        var w = width2 - padding;
+        var w = width2;
         var h = height2;
-
+        var numTicks = d.length
         // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
         var lineScalex = d3.time.scale()
             .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
+           // .ticks(numTicks)
             //.domain(d3.time.years(d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; }), 1))
             //.domain(d3.time.years(d3.min(d, function(d){ return d.Year.getFullYear(); }), d3.max(d, function(d){ return d.Year.getFullYear(); }), 1))
             .range([padding, w ]);
 
-        var xDomain = d3.extent(d, function(d){ return d.Year; });
+       // var xDomain = d3.extent(d, function(d){ return d.Year; });
 
         var lineXAxis = d3.svg.axis()
             .scale(lineScalex)
+            .ticks(numTicks)
             .orient("bottom");
 
         // https://github.com/mbostock/d3/wiki/Time-Intervals#wiki-year
@@ -640,7 +646,13 @@ function drawRiderDetailGraphs(d, i) {
 
         var lineScaley = d3.scale.linear()
             .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
-            .range([h - padding, padding]);
+             .range([h - padding, padding]);
+       /* var lineScaleR =  d3.scale.linear()
+            .domain( [d3.max(d, function(d){ return d.Speed; }), d3.min(d, function(d){ return d.Speed; })-50] )
+            .range([15, 1]);*/
+        var lineScaleR =  d3.scale.linear()
+            .domain( [72, 1] )
+            .range([10, 4]);
 
         var lineYAxis = d3.svg.axis()
             .scale(lineScaley)
@@ -654,10 +666,27 @@ function drawRiderDetailGraphs(d, i) {
         ////////////// GOOD UP TO HERE //////////////
 
         // draw the line chart
-        svg2.append("path")
-            .data( d )
-            .attr("class", "speed-line")
-            .attr("d", line2 );
+
+
+
+
+        svg2.selectAll("circle")
+            .data(d)
+            .enter()
+            .append("circle")
+            .attr("class", "rider-detail-graphs speed-circle")
+            .attr("cy", function(d){ return lineScaley(d.Speed); })
+            .attr("cx", function(d) { return lineScalex(d.Year); })
+         .attr("r", function(d){ return lineScaleR(Math.ceil(d.Speed)); });
+           // .attr("r", function(d){ return d.Position ; });
+
+        svg2.selectAll("text")
+            .data(d).enter()
+            .append("text")
+            .text(function(d) { return  d.Position; })
+            .attr("class", "rider-detail-graphs speed-circle-text")
+            .attr("x", function(d) { return lineScalex(d.Year) + lineScaleR(Math.ceil(d.Speed)) - 5; })
+            .attr("y", function(d) { return lineScaley(d.Speed)- lineScaleR(Math.ceil(d.Speed)) + 5; });
 
         svg2.append("g")
             .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
@@ -678,6 +707,15 @@ function drawRiderDetailGraphs(d, i) {
             .attr("y", -32)
             .attr("x", -(h/3)*2)
             .text("Avg. Speed");
+
+
+        /*
+        svg2.append("path")
+            .data( d )
+            .attr("class", "speed-line")
+            .attr("d", line2 );
+            */
+
     }
 
 
@@ -689,7 +727,7 @@ function drawRiderDetailGraphs(d, i) {
          var h = height2;
          var barPadding = 2;
 
-         var dFiltered = d3.nest()
+/*         var dFiltered = d3.nest()
                              .key(function(d) { return d.Position })
                              .sortKeys(d3.ascending)
                              .rollup(function (d) {
@@ -700,9 +738,80 @@ function drawRiderDetailGraphs(d, i) {
                                      Year: d3.min(d, function(g) {return g.Year})
                                  }
                              })
-                             .entries(d);
+                             .entries(d);*/
 
-         var barScaleX = d3.time.scale()
+         var dGrouped = d3.nest()
+             .key(function(d) { return d.Rider1; })
+             .key(function(d) { return +d.Position}).sortKeys(d3.ascending)
+             .rollup(function (d){
+                 return{
+                     Times: (d.length),
+                     Name: d3.min(d, function(g) {return g.Rider1}),
+                     Position: d3.min(d, function(g) {return +g.Position}),
+                     Year: d3.min(d, function(g) {return g.Year})
+                 }
+             })
+             .entries(d);
+
+        /// var test = dGrouped[0].key.sort();
+         var barScaley = d3.scale.linear()
+             .domain([0, d3.max(dGrouped[0].values, function(d) { return d.values.Times; })])
+             .rangeRound([h - padding , padding]);
+
+
+         var barScaley2 = d3.scale.linear()
+             .domain([d3.max(dGrouped[0].values, function(d) { return d.values.Times; }), 0])
+             .rangeRound([  h - padding,padding]);
+
+         var barScalex = d3.scale.linear()
+                 .domain([d3.min(dGrouped[0].values, function(d){ return d.Position; }) , d3.max(dGrouped[0].values, function(d){ return d.Position;})])
+                 .range([padding, w - padding * 2]);
+
+         var barXAxis = d3.svg.axis()
+             .scale(barScalex)
+             .orient("bottom");
+
+         var barYAxis = d3.svg.axis()
+                 .scale(barScaley)
+                 .tickFormat(d3.format("d"))
+                 .orient("left");
+
+         svg3.selectAll("rect")
+             .data(dGrouped[0].values)
+             .enter()
+             .append("rect")
+             .attr("fill", "teal")
+             .attr("x", function(d,i){ return i*((w - padding) / dGrouped[0].values.length) + padding + 1; })
+             .attr("class", "rider-detail-graphs")
+             .attr("y",function(d){ return  h -(barScaley2(d.values.Times)) ;} )
+             .attr("width", (w  - (padding ))/ dGrouped[0].values.length - barPadding)
+             .attr("height",  function(d){return barScaley2(d.values.Times) - padding ;});
+
+         svg3.selectAll("text")
+             .data(dGrouped[0].values)
+             .enter()
+             .append("text")
+             .text(function(d){ if ( d.values.Position == 72 ) return "DNF"; else return +d.values.Position; })
+             .attr("x", function(d, i) { return i*((w - padding) / dGrouped[0].values.length) + padding + 15; })
+             .attr("y",function(d){ return  h - padding  - 2 ;} )
+             .attr("class", "rider-detail-graphs")
+             .attr("font-family", "sans-serif")
+             .attr("font-size", "11x")
+             .attr("font-weight", "bold")
+             .attr("text-anchor", "middle")
+             .attr("fill", "black");
+
+         svg3.append("g")
+             .attr("class", "axis rider-detail-graphs")
+             .attr("transform", "translate(" +  padding + ", 0)")
+             .call(barYAxis)
+             .append("text")
+             .attr("transform", "rotate(-90)")
+             .attr("y", -32)
+             .attr("x", -(h/3)*2)
+             .text("Number Of Times");
+
+/*         var barScaleX = d3.time.scale()
                              .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
                              .range([padding, w ]);
 
@@ -721,9 +830,9 @@ function drawRiderDetailGraphs(d, i) {
          var barYAxis = d3.svg.axis()
                              .scale(barScaleY)
                              .orient("left");
-                             //.ticks(5);
+                             //.ticks(5);*/
 
-         svg3.selectAll("rect")
+/*         svg3.selectAll("rect")
                  .data(dFiltered)
                  .enter()
                  .append("rect")
@@ -751,7 +860,7 @@ function drawRiderDetailGraphs(d, i) {
                     //var barHeight = barScaleY2(curHeight);
                     return curHeight;
                   })
-                  .attr("class", "rider-detail-graphs");
+                  .attr("class", "rider-detail-graphs");*/
 
          //        svg3.selectAll("text")
          //            .data(dFiltered)
