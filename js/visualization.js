@@ -560,7 +560,8 @@ window.onload = function() {
             //alert("you clicked on a race class filter!   raceClassToFilter: ["+raceClassToFilter+"]");
 
             // filter the dataset
-            var newRaceClass = raceClasses[raceClassToFilter];
+            //var newRaceClass = raceClasses[raceClassToFilter];
+            var newRaceClass = allRaceClasses[raceClassToFilter];
             //raceClasses = [raceClasses.raceClassToFilter];
             //raceClasses = newRaceClass;
             raceClasses = { raceClassToFilter :  newRaceClass  };
