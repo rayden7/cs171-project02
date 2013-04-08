@@ -147,6 +147,25 @@ ul#main-nav {
     list-style-type: none;
 }
 
+.tt-img {
+    margin: 3px;
+}
+
+.tt-img-floatleft {
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.tt-img-floatright {
+    float: right;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+
+
 #main-nav li {
     width: 100px;
     display: inline-block;
