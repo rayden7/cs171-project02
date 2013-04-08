@@ -739,6 +739,192 @@ function drawRiderDetailGraphs(d, i) {
             })
             .entries(d);
 
+        var nestedRidersFiltered = d3.nest()
+            .key(function(d) { return d.Rider1; })
+            .key(function(d) { return +d.Position}).sortKeys(d3.ascending)
+            .rollup(function (d){
+                return{
+                    Times: (d.length),
+                    Name: d3.min(d, function(g) {return g.Rider1}),
+                    Position: d3.min(d, function(g) {return +g.Position}),
+                    Year: d3.min(d, function(g) {return g.Year})
+                }
+            })
+            .entries(d);
+
+        var barScaley = d3.scale.linear()
+            .domain([0, d3.max(nestedRidersFiltered[0].values, function(d) { return d.values.Times; })])
+            .range([h - padding , padding]);
+
+
+        var barScaley2 = d3.scale.linear()
+            .domain([d3.max(nestedRidersFiltered[0].values, function(d) { return d.values.Times; }), 0])
+            .range([  h - padding,padding]);
+
+        var barScalex = d3.scale.linear()
+                .domain([
+                    d3.min(nestedRidersFiltered[0].values, function(d){
+                        return d.Position;
+                    })
+                    , d3.max(nestedRidersFiltered[0].values, function(d){
+                        return d.Position;
+                    })])
+                .range([padding, w - padding * 2])
+            ;
+       // console.log(dataset);
+        var barXAxis = d3.svg.axis()
+            .scale(barScalex)
+            .orient("bottom");
+
+        var barYAxis = d3.svg.axis()
+                .scale(barScaley)
+                .orient("left")
+            ;
+
+
+
+        svg3.selectAll("rect")
+            .data(nestedRidersFiltered[0].values)
+            .enter()
+            .append("rect")
+            .attr("fill", "teal")
+            .attr("x", function(d,i){
+                return i*((w - padding) / nestedRidersFiltered[0].values.length) + padding + 1;
+            })
+            .attr("class", "rider-detail-graphs")
+            .attr("y",function(d){ //console.log(d.values.Position);
+                return  h -(barScaley2(d.values.Times))
+                    ;} )
+            .attr("width", (w  - (padding ))/ nestedRidersFiltered[0].values.length - barPadding)
+            .attr("height",  function(d){
+
+                // return d.values.Times ;
+                return barScaley2(d.values.Times + padding)  ;
+
+            });
+       // console.log(nestedRidersFiltered[0].values);
+        svg3.selectAll("text")
+            .data(nestedRidersFiltered[0].values)
+            .enter()
+            .append("text")
+            .text(function(d){
+                if (d.values.Position == 71) return "DNF"; else return +d.values.Position;
+                // return +d.values.Position;
+            })
+            .attr("x", function(d, i) {
+                return i*((w - padding) / nestedRidersFiltered[0].values.length) + padding + 15;
+                // return i * (w / nestedRidersFiltered[0].values.length) + (w/ nestedRidersFiltered[0].values.length - barPadding) / 2;
+            })
+            .attr("y",function(d){ //console.log(d.values.Position);
+                return  h - padding  - 2 ;} )
+            .attr("class", "rider-detail-graphs")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11x")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "middle")
+            .attr("fill", "black");
+
+        svg3.append("g")
+            .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .call(barXAxis)
+            .append("text")
+            .attr("x", w / 2)
+            .attr("y", 30)
+            .style("text-anchor", "end")
+            .text("Position");
+
+        svg3.append("g")
+            .attr("class", "axis rider-detail-graphs")
+            .attr("transform", "translate(" +  padding + ", 0)")
+            .call(barYAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -32)
+            .attr("x", -(h/3)*2)
+            .text("Number Of Times");
+
+        /*
+        var barScaleX = d3.scale.linear()
+            .domain([d3.min(nestedRidersFiltered[0].values , function(d){ return d.Position; }), d3.max(nestedRidersFiltered[0].values, function(d){ return d.Position; })] )
+            .range([padding, w ]);
+
+        var barScaleY = d3.scale.linear()
+            //.domain([5, 1])  // we only care about positions 1-5 for this chart
+            .domain([d3.min(nestedRidersFiltered[0].values , function(d){ return d.Times; }), d3.max(nestedRidersFiltered[0].values, function(d){ return d.Times; })] )
+            .range([h - padding, padding]);
+
+        var barXAxis = d3.svg.axis()
+            .scale(barScaleX)
+            .ticks(numTicks)
+            .orient("bottom");
+
+        var barYAxis = d3.svg.axis()
+            .scale(barScaleY)
+            .orient("left")
+            .ticks(5);  // just show 5 years on the Y-axis  */
+
+        /*
+
+        svg3.selectAll("rect")
+            .data(nestedRidersFiltered[0].values)
+            .enter()
+            .append("rect")
+            .attr("fill", "teal")
+            .attr("class", "rider-detail-graphs")
+            .attr("x", function(d,i){
+                return i*(w / nestedRidersFiltered[0].values.length) ;
+                // console.log(d.key);
+                // return d.key;
+            })
+            .attr("y",function(d){ //console.log(d.values.Position);
+                return h - (d.values.Times * 20);} )
+            .attr("width", w / nestedRidersFiltered[0].values.length - barPadding)
+            .attr("height",  function(d){console.log(d.values.Times);
+                return d.values.Times * 20;});
+
+        svg3.selectAll("text")
+            .data(nestedRidersFiltered[0].values)
+            .enter()
+            .append("text")
+            .attr("class", "rider-detail-graphs")
+            .text(function(d){
+                return d.values.Position;
+            })
+            .attr("x", function(d, i) {
+                return i * (w / nestedRidersFiltered[0].values.length) + (w / nestedRidersFiltered[0].values.length - barPadding) / 2;
+            })
+
+            .attr("y",function(d){ //console.log(d.values.Position);
+                return  h - 1 ;} )
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11x")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "middle")
+            .attr("fill", "black");
+
+        svg3.append("g")
+            .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .call(barXAxis)
+            .append("text")
+            .attr("x", w / 2)
+            .attr("y", 30)
+            .style("text-anchor", "end")
+            .text("Year");
+
+        svg3.append("g")
+            .attr("class", "axis rider-detail-graphs")
+            .attr("transform", "translate(" +  padding + ", 0)")
+            .call(barYAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -32)
+            .attr("x", -(h/3)*2)
+            .text("Race Position");   */
+
+
+         /*
         var barScaleX = d3.time.scale()
                             .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
                             .range([padding, w ]);
@@ -759,7 +945,22 @@ function drawRiderDetailGraphs(d, i) {
                             .scale(barScaleY)
                             .orient("left");
                             //.ticks(5);
-
+        svg3.selectAll("rect")
+            .data(nestedRidersFiltered[0].values)
+            .enter()
+            .append("rect")
+            .attr("fill", "teal")
+            .attr("x", function(d,i){
+                return i*(w / nestedRidersFiltered[0].values.length) ;
+                // console.log(d.key);
+                // return d.key;
+            })
+            .attr("y",function(d){ //console.log(d.values.Position);
+                return h - (d.values.Times * 8);} )
+            .attr("width", w / nestedRidersFiltered[0].values.length - barPadding)
+            .attr("height",  function(d){console.log(d.values.Times);
+                return d.values.Times * 8;});         */
+         /*
         svg3.selectAll("rect")
             .data(dFiltered)
             .enter()
@@ -787,7 +988,7 @@ function drawRiderDetailGraphs(d, i) {
                 //var barHeight = barScaleY2(curHeight);
                 return curHeight;
             })
-            .attr("class", "rider-detail-graphs");
+            .attr("class", "rider-detail-graphs");          */
         /*
         svg3.selectAll("text")
             .data(dFiltered)

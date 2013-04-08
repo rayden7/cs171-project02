@@ -380,11 +380,7 @@ d3.csv("Data/races_data2.csv", function(error, data) {
             .attr("x", function(d, i) {
                 return i * (w / nestedRidersFiltered[0].values.length) + (w / nestedRidersFiltered[0].values.length - barPadding) / 2;
             })
-        /*    .attr("x", function(d,i){
-                return i*(w / nestedRidersFiltered[0].values.length) + 5 ;
-                // console.log(d.key);
-                // return d.key;
-            }) */
+
             .attr("y",function(d){ //console.log(d.values.Position);
                 return  h - 1 ;} )
             .attr("font-family", "sans-serif")
