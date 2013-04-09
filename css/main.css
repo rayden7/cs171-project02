@@ -105,7 +105,6 @@ textarea {
 
 
 
-
 /* ==========================================================================
    Author's custom css
    ========================================================================== */
@@ -172,8 +171,6 @@ ul#main-nav {
     border: 2px solid black;
 }
 
-
-
 #main-nav li {
     width: 100px;
     display: inline-block;
@@ -237,23 +234,19 @@ ul.improvements li {
     margin-bottom: 1em;
 }
 
-div#viz-info ul.four-column {
+div#viz-info ul.five-column {
     margin-top: 10px;
     list-style: none;
     width: 1000px;
     overflow:hidden;
 }
-div#viz-info ul.four-column li {
-    width: 50%;
-    width: 33%;
-    width: 25%;
+
+div#viz-info ul.five-column li {
     width: 20%;
     float:left;
     display:inline;
     margin-bottom: 5px;
 }
-
-
 
 footer {
     clear: both;
