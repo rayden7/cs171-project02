@@ -368,7 +368,6 @@ window.onload = function() {
                 TTCareerSummaryPositionDNF: +d.TTCareerSummaryPositionDNF
             });
         });
-        //console.log("riderDataset.length: " +riderDataset.length);
     });
 
 
@@ -396,12 +395,9 @@ window.onload = function() {
              classes (e.g., maybe there are too many occurrences of this class of race in the given year, or the
              race is not part of a longer-running, year-over-year series and so we can't show rider position placement
              year-over-year, etc.
-
-             */
+            */
             // only add race data for the races not on the list of ones ot exlude
-
-
-            //if (racesToExclude.indexOf(d.RaceName) == -1) {
+            if (racesToExclude.indexOf(d.RaceName) == -1) {
                 dataset.push({
                     RiderID: +d.RiderID,  // parse the RiderID as a number
                     RaceName: d.RaceName,
@@ -416,37 +412,12 @@ window.onload = function() {
                     Speed: +d.Speed, // parse the Speed as a number
                     RaceClass: getRaceClass(d.RaceName)  // get information about the main race this record is under
                 });
-            //}
+            }
         });
 
 
 
-        //********************************************************************************************************************//
-
-        /*
-         // the Isle of Man TT did not take place in 2001 because of the Foot & Mouth disease outbreak,
-         // so we want to exclude 2001 from our X-axis domain; to do this, we need to construct out the
-         // entire array of years that the TT *did* take place in the modern era (so from 1991-2012,
-         // excluding 2001)
-         var customYearDomain = [];
-         var firstYear = d3.min(dataset, function(d) { return d.Year; });
-         var lastYear = d3.max(dataset, function(d) { return d.Year; });
-         var twoThousandOneDate = new Date(2001,0).getTime();
-         for (var i = firstYear; i <= lastYear; i = new Date(i.getFullYear()+1,0) ) {
-         //var iTime = new Date(i, 0).getTime();
-         //var twoThousandOneTime = new Date(2001,0).getTime();
-         //if ( i !== 2001 && iTime !== twoThousandOneTime) {
-         if ( i !== twoThousandOneDate) {
-         customYearDomain.push(i);
-         }
-         }
-         */
-
-        //********************************************************************************************************************//
-
-
-
-        //********************************************************************************************************************//
+        //************************************************************************************************************//
         /**
          * SPECIAL CASE: "DID NOT FINISH" (a.k.a., "DNF") race position records
          *
@@ -479,7 +450,6 @@ window.onload = function() {
         y.domain([dnfPlace, 1]);
 
 
-
         // draw the X-axis indicating the year the races were held (note that in 2001 the TT was cancelled due to
         // the Foot & Mouth Disease outbreak (see: http://www.iomtt.com/TT-Database/Events.aspx?meet_code=TT01)
         svg.append("g")
@@ -494,12 +464,8 @@ window.onload = function() {
             .text("Year");
 
 
+        //************************************* draw the main visualization area *************************************//
         redrawRaceLines();
-
-        // use this as a test to ensure that we can clear all of the lines on the graph and re-draw them by calling
-        // the redrawRaceLines() function; this will allow us to filter out the dataset array and then call
-        // redrawRaceLines again to filter out race classes
-        //window.setTimeout(function(){ redrawRaceLines(); }, 3000);
 
 
         // build out the primary race lines visualization by looping over all the race classes, filtering out each
@@ -512,20 +478,12 @@ window.onload = function() {
             // loop over each of the raceClasses, filter the dataset to get just riders in each class,
             // then draw all the race lines for the specified class
             for (var raceClass in raceClasses) {
-                //console.log("current race class: ["+raceClass+"]");
-
                 // filter out each race and group them first by unique rider, then by race type, and finally,
                 // restrict the dataset to be only for that specified RaceClass
                 var raceClassRecords = d3.nest()
                     .key(function(d) { return d.Rider1; })    // group all the records for the individual Rider
                     .key(function(d) { return d.RaceType; })  // and further group the records for individual race classes
                     .entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass]; }) );
-                //.entries( dataset.filter(function(d) { return d.RaceClass == raceClasses[raceClass]; }) );
-                //.entries( dataset.filter(function(d) { return (d.RaceClass === "supersporta" || d.RaceClass === "supersportb"); }) );
-                //.entries( dataset.filter(function(d) { return (d.RaceType === "supersporta" || d.RaceType === "supersportb"); }) );
-                //.entries( dataset.filter(function(d) { return d.RaceType === raceClasses[raceClass] || d.RaceClass === raceClasses[raceClass]; }) );
-                //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 4307; }) ); // just show John McGuiness race lines
-                //.entries( dataset.filter(function(d) { return d.RaceClass === raceClasses[raceClass] && d.RiderID === 8430; }) ); // just show Guy MARTIN race lines
 
                 raceClassRecords.forEach(function(idx) {
                     idx.values.forEach(function(innerIdx) {
@@ -569,42 +527,13 @@ window.onload = function() {
 
         yAxis.ticks(dnfPlace);
 
-
-
-
-
         // RACE CLASS filtering
         $("#raceClassFilter ul li").click(function(e){
-
             // get the name of the currently selected race class
             var raceClassToFilter = this.children[0].id;
-
-            console.log(raceClassToFilter);
-
-            //alert("you clicked on a race class filter!   raceClassToFilter: ["+raceClassToFilter+"]");
-
-            // filter the dataset
-            //var newRaceClass = raceClasses[raceClassToFilter];
             var newRaceClass = allRaceClasses[raceClassToFilter];
-            //raceClasses = [raceClasses.raceClassToFilter];
-            //raceClasses = newRaceClass;
-
-            // MOSTLY works, but doesn't filter out SidecarA, SidecarB,
-            /*
-             races not filtering properly
-             TT Sidecar Race B
-             TT Supersport Race A
-             TT Supersport Race B
-             TT Ultra Lightweight 125
-
-             races filtering weirdly
-             TT Lightweight (seems to show 2 classes??)
-             */
             raceClasses = { raceClassToFilter :  newRaceClass  };
-            //raceClasses[raceClassToFilter] = newRaceClass;
-
             redrawRaceLines();
-
             return 0;
         });
 
