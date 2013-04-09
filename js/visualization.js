@@ -221,7 +221,6 @@ var svg3 = d3.select("#viz")
     .append("g")
     .attr("transform", "translate(" + margin3.left + "," + margin3.top + ")");
 
-// translate the X and Y positions to make it easier to draw to the primary visualization area
 var svg2 = d3.select("#viz")
     .append("svg")
     .attr("width", width2 + margin2.left + margin2.right)
@@ -235,13 +234,6 @@ var svg4 = d3.select("#viz")
     .attr("height", height4 + margin4.top + margin4.bottom)
     .append("g")
     .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
-
-// translate the X and Y positions to make it easier to draw to the primary visualization area
-
-
-// translate the X and Y positions to make it easier to draw to the primary visualization area
-
-
 
 
 // later we will be appending rider race class race performance lines to this element
@@ -300,14 +292,6 @@ window.onload = function() {
         .x(function(d) { return x(d.Year); })
         .y(function(d) { return y(d.Position); })
         .defined(function(d){ return (d.x !== null && d.y !== null); });
-
-
-    //****************************************************************************************************************//
-    //                                                                                                                //
-    // TT VIDEO LINK TO EXPLAIN WHAT THE ISLE OF MAN TT IS - SHOULD PUT IN PROCESS BOOK AND LINK FROM VISUALIZATION   //
-    //      http://www.youtube.com/watch?feature=player_embedded&v=VOTvQuuQ7B4                                        //
-    //                                                                                                                //
-    //****************************************************************************************************************//
 
 
     /*
