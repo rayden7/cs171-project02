@@ -235,6 +235,11 @@ ol.explanation li {
     margin-bottom: 1em;
 }
 
+ol.explanation li {
+    margin-left: 4em;
+}
+
+
 div#viz-info ul.five-column {
     margin-top: 10px;
     list-style: none;
