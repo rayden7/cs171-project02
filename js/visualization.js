@@ -625,12 +625,7 @@ function drawRiderDetailGraphs(d, i) {
         // define the X-axis scale and Y-axis scale for the average speed line graph for an individually mouseed-over rider
         var lineScalex = d3.time.scale()
             .domain([d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; })] )
-           // .ticks(numTicks)
-            //.domain(d3.time.years(d3.min(d, function(d){ return d.Year; }), d3.max(d, function(d){ return d.Year; }), 1))
-            //.domain(d3.time.years(d3.min(d, function(d){ return d.Year.getFullYear(); }), d3.max(d, function(d){ return d.Year.getFullYear(); }), 1))
             .range([padding, w ]);
-
-       // var xDomain = d3.extent(d, function(d){ return d.Year; });
 
         var lineXAxis = d3.svg.axis()
             .scale(lineScalex)
@@ -647,9 +642,7 @@ function drawRiderDetailGraphs(d, i) {
         var lineScaley = d3.scale.linear()
             .domain([0, d3.max(d, function(d) { return d.Speed; }) + 1])
              .range([h - padding, padding]);
-       /* var lineScaleR =  d3.scale.linear()
-            .domain( [d3.max(d, function(d){ return d.Speed; }), d3.min(d, function(d){ return d.Speed; })-50] )
-            .range([15, 1]);*/
+
         var lineScaleR =  d3.scale.linear()
             .domain( [72, 1] )
             .range([10, 4]);
@@ -663,13 +656,6 @@ function drawRiderDetailGraphs(d, i) {
             .x(function(d) { return lineScalex(d.Year); })
             .y(function(d) { return lineScaley(d.Speed); });
 
-        ////////////// GOOD UP TO HERE //////////////
-
-        // draw the line chart
-
-
-
-
         svg2.selectAll("circle")
             .data(d)
             .enter()
@@ -677,8 +663,7 @@ function drawRiderDetailGraphs(d, i) {
             .attr("class", "rider-detail-graphs speed-circle")
             .attr("cy", function(d){ return lineScaley(d.Speed); })
             .attr("cx", function(d) { return lineScalex(d.Year); })
-         .attr("r", function(d){ return lineScaleR(Math.ceil(d.Speed)); });
-           // .attr("r", function(d){ return d.Position ; });
+            .attr("r", function(d){ return lineScaleR(Math.ceil(d.Speed)); });
 
         svg2.selectAll("text")
             .data(d).enter()
@@ -707,102 +692,78 @@ function drawRiderDetailGraphs(d, i) {
             .attr("y", -32)
             .attr("x", -(h/3)*2)
             .text("Avg. Speed");
-
-
-        /*
-        svg2.append("path")
-            .data( d )
-            .attr("class", "speed-line")
-            .attr("d", line2 );
-            */
-
     }
 
+    // show a bar chart indicating how many times the rider has finished in a given position for the
+    // currently moused-over race class
+    {
+        var padding = 30;
+        var w = width2 - padding;
+        var h = height2;
+        var barPadding = 2;
 
-     // show a bar chart indicating how many times the rider has finished in a given position for the
-     // currently moused-over race class
-     {
-         var padding = 30;
-         var w = width2 - padding;
-         var h = height2;
-         var barPadding = 2;
+        var dGrouped = d3.nest()
+                .key(function(d) { return d.Rider1; })
+                .key(function(d) { return +d.Position}).sortKeys(d3.ascending)
+                .rollup(function (d) {
+                    return {
+                        Times: (d.length),
+                        Name: d3.min(d, function(g) {return g.Rider1}),
+                        Position: d3.min(d, function(g) {return +g.Position}),
+                        Year: d3.min(d, function(g) {return g.Year})
+                    }
+                })
+                .entries(d);
 
-/*         var dFiltered = d3.nest()
-                             .key(function(d) { return d.Position })
-                             .sortKeys(d3.ascending)
-                             .rollup(function (d) {
-                                 return {
-                                     Times: (d.length),
-                                     Name:  d3.min(d, function(g) {return g.Rider1}),
-                                     Position: d3.min(d, function(g) {return g.Position}),
-                                     Year: d3.min(d, function(g) {return g.Year})
-                                 }
-                             })
-                             .entries(d);*/
+        var barScaley = d3.scale.linear()
+            .domain([0, d3.max(dGrouped[0].values, function(d) { return d.values.Times; })])
+            .rangeRound([h - padding , padding]);
 
-         var dGrouped = d3.nest()
-             .key(function(d) { return d.Rider1; })
-             .key(function(d) { return +d.Position}).sortKeys(d3.ascending)
-             .rollup(function (d){
-                 return{
-                     Times: (d.length),
-                     Name: d3.min(d, function(g) {return g.Rider1}),
-                     Position: d3.min(d, function(g) {return +g.Position}),
-                     Year: d3.min(d, function(g) {return g.Year})
-                 }
-             })
-             .entries(d);
+        var barScaley2 = d3.scale.linear()
+            .domain([d3.max(dGrouped[0].values, function(d) { return d.values.Times; }), 0])
+            .rangeRound([  h - padding,padding]);
 
-        /// var test = dGrouped[0].key.sort();
-         var barScaley = d3.scale.linear()
-             .domain([0, d3.max(dGrouped[0].values, function(d) { return d.values.Times; })])
-             .rangeRound([h - padding , padding]);
+        var barScalex = d3.scale.linear()
+            .domain(
+                [d3.min(dGrouped[0].values, function(d){ return d.Position; }),
+                 d3.max(dGrouped[0].values, function(d){ return d.Position;})])
+            .range([padding, w ]);
 
+        var barXAxis = d3.svg.axis()
+            .scale(barScalex)
+            .orient("bottom");
 
-         var barScaley2 = d3.scale.linear()
-             .domain([d3.max(dGrouped[0].values, function(d) { return d.values.Times; }), 0])
-             .rangeRound([  h - padding,padding]);
+        var barYAxis = d3.svg.axis()
+            .scale(barScaley)
+            .tickFormat(d3.format("d"))
+            .orient("left");
 
-         var barScalex = d3.scale.linear()
-                 .domain([d3.min(dGrouped[0].values, function(d){ return d.Position; })
-                 , d3.max(dGrouped[0].values, function(d){ return d.Position;})])
-                // .range([padding, w - padding - 10]);
-                 .range([padding, w ]);
-         var barXAxis = d3.svg.axis()
-             .scale(barScalex)
-             .orient("bottom");
+        svg3.selectAll("rect")
+            .data(dGrouped[0].values)
+            .enter()
+            .append("rect")
+            .attr("x", function(d,i){ return i*((w - padding) / dGrouped[0].values.length) + padding + 1; })
+            .attr("class", "rider-detail-graphs num-finishes-bars")
+            .attr("y",function(d){ return  h -(barScaley2(d.values.Times)) ;} )
+            .attr("width", (w  - (padding ))/ dGrouped[0].values.length - barPadding)
+            .attr("height",  function(d){return barScaley2(d.values.Times) - padding ;});
 
-         var barYAxis = d3.svg.axis()
-                 .scale(barScaley)
-                 .tickFormat(d3.format("d"))
-                 .orient("left");
+        svg3.selectAll("text")
+            .data(dGrouped[0].values)
+            .enter()
+            .append("text")
+            .text(function(d){ if ( d.values.Position == 72 ) return "DNF"; else return +d.values.Position; })
+            .attr("x", function(d, i) { return i*((w - padding) / dGrouped[0].values.length) + padding + 15; })
+            .attr("y",function(d){ return  h - padding + 13 ;} )
+            .attr("class", "rider-detail-graphs")
 
-         svg3.selectAll("rect")
-             .data(dGrouped[0].values)
-             .enter()
-             .append("rect")
-             .attr("fill", "teal")
-             .attr("x", function(d,i){ return i*((w - padding) / dGrouped[0].values.length) + padding + 1; })
-             .attr("class", "rider-detail-graphs")
-             .attr("y",function(d){ return  h -(barScaley2(d.values.Times)) ;} )
-             .attr("width", (w  - (padding ))/ dGrouped[0].values.length - barPadding)
-             .attr("height",  function(d){return barScaley2(d.values.Times) - padding ;});
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11x")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "middle")
+            .attr("fill", "black");
 
-         svg3.selectAll("text")
-             .data(dGrouped[0].values)
-             .enter()
-             .append("text")
-             .text(function(d){ if ( d.values.Position == 72 ) return "DNF"; else return +d.values.Position; })
-             .attr("x", function(d, i) { return i*((w - padding) / dGrouped[0].values.length) + padding + 15; })
-             .attr("y",function(d){ return  h - padding + 13 ;} )
-             .attr("class", "rider-detail-graphs")
-             .attr("font-family", "sans-serif")
-             .attr("font-size", "11x")
-             .attr("font-weight", "bold")
-             .attr("text-anchor", "middle")
-             .attr("fill", "black");
-
-         svg3.append("g")
+        svg3.append("g")
              .attr("class", "axis rider-detail-graphs")  //Assign "axis" class
              .attr("transform", "translate(0," + (h - padding) + ")")
              .call(barXAxis)
@@ -810,7 +771,7 @@ function drawRiderDetailGraphs(d, i) {
              .attr("x", w / 2)
              .attr("y", 30)
              .style("text-anchor", "end")
-             .text("Position");
+             .text("Race Position");
 
          svg3.append("g")
              .attr("class", "axis rider-detail-graphs")
@@ -819,78 +780,9 @@ function drawRiderDetailGraphs(d, i) {
              .append("text")
              .attr("transform", "rotate(-90)")
              .attr("y", -32)
-             .attr("x", -(h/3)*2)
-             .text("Number Of Times");
-
-/*         var barScaleX = d3.time.scale()
-                             .domain([d3.min(dFiltered, function(d){ return d.values.Year; }), d3.max(dFiltered, function(d){ return d.values.Year; })] )
-                             .range([padding, w ]);
-
-         var barScaleY = d3.scale.linear()
-                             .domain([0, d3.max(dFiltered, function(d) { return d.values.Times; })])
-                             .range([h, padding]);
-
-         var barScaleY2 = d3.scale.linear()
-                             .domain([d3.max(dFiltered, function(d) { return d.values.Times; }), 0])
-                             .range([h - padding, 0]);
-
-         var barXAxis = d3.svg.axis()
-                             .scale(barScaleX)
-                             .orient("bottom");
-
-         var barYAxis = d3.svg.axis()
-                             .scale(barScaleY)
-                             .orient("left");
-                             //.ticks(5);*/
-
-/*         svg3.selectAll("rect")
-                 .data(dFiltered)
-                 .enter()
-                 .append("rect")
-                 .attr("fill", "teal")
-                 //.attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 1; })
-                 .attr("x", function(d, i) { return i*((w - padding) / dFiltered.length) + padding + 1; })
-
-                 //.attr("y", function(d) { return  h -(barScaleY2(d.values.Times)); } )
-                 .attr("y", function(d) { return  h -(barScaleY2(dFiltered.Times)); } )
-                 //.attr("width", (w  - (padding * 3))/ dFiltered.values.length - barPadding)
-                 .attr("width", (w  - (padding * 3))/ d.length - barPadding)
-                 //.attr("height", function(d) { return barScaleY2(d.values.Times + padding); })
-                 //.attr("height", function(d) { return barScaleY2(dFiltered.Times + padding); })
-                 //.attr("height", function(d,i) { return barScaleY2(dFiltered[i].Times + padding); })
-                 .attr("height", function(d,i) {
-
-                     //var numTimes = dFiltered[i].values.Times;
-                     var numTimes = d.values.Times;
-
-                     console.log("numTimes: ["+numTimes+"]");
-
-                     var curHeight = barScaleY2(numTimes + padding);
-
-                    //var curHeight = barScaleY(numTimes + padding);
-                    //var barHeight = barScaleY2(curHeight);
-                    return curHeight;
-                  })
-                  .attr("class", "rider-detail-graphs");*/
-
-         //        svg3.selectAll("text")
-         //            .data(dFiltered)
-         //            .enter()
-         //            .append("text")
-         //            .text(function(d) { if (d.values.Position == 72) return "DNF"; else return d.values.Position; })
-         //            .attr("x", function(d, i) { return i*((w - padding) / dFiltered.values.length) + padding + 15; })
-         //            .attr("y", function(d) { return  h - padding  - 2 ; })
-         //
-         //            .attr("class", "rider-detail-graphs")
-         //
-         //            .attr("font-family", "sans-serif")
-         //            .attr("font-size", "11x")
-         //            .attr("font-weight", "bold")
-         //            .attr("text-anchor", "middle")
-         //            .attr("fill", "black");
-
-     }
-
+             .attr("x", -(h/3)*2.5)
+             .text("Number Race Class Wins");
+    }
 
 
     // show a graph with dots corresponding to the rider's average speed for races where they placed in positions

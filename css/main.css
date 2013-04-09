@@ -166,8 +166,10 @@ ul#main-nav {
 
 .svg-img-floatleft {
     float: left;
-    clear: both;
+    clear: right;
     margin: 0 15px 15px 5px;
+    padding: 0;
+    border: 2px solid black;
 }
 
 
@@ -219,11 +221,11 @@ article {
     -webkit-border-radius: 2em;
     font-size: 1.25em;
     text-align: justify;
-
     border: 2px solid black;
     margin: 20px auto;
+    margin: 20px;
     padding: 30px;
-    width: 450px;
+    width: 850px;
     background-color: salmon;
 }
 
