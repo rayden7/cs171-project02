@@ -230,7 +230,8 @@ article {
     margin-bottom: 1em;
 }
 
-ul.improvements li {
+ul.improvements li,
+ol.explanation li {
     margin-bottom: 1em;
 }
 

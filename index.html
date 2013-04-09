@@ -71,6 +71,7 @@
         <aside id="riderInfo"></aside>
 
         <div id="viz-info">
+            <h2>Isle of Man TT</h2>
             <p>The Isle of Man TT is the world's most famous, prestigious, and infamous motorcycle road race (for more
                 details about what the TT is, please see the <a href="about.html">About</a> page).  Our
                 visualization is focused on visualizing rider race performance across all of the variety of race
@@ -86,11 +87,40 @@
                 <a href="http://www.iomtt.com/TT-Database.aspx">TT Database</a>, which we used as our primary data
                 source, and we wrote Python scripts to mine the data.  We concerned ourselves with showing line graphs
                 per rider, per race class so that we could visualize how the rider has performed in a given race
-                class.  When you mouse over a racing line in the primary visualization above, the line will turn black
-                to call it out so that you can see how the rider has performed in the selected race class over time.</p><br />
+                class.  For more information, see the <a href="inspiration.html.html">Inspiration</a> and
+                <a href="about.html">About</a> pages.</p>
+            <hr />
+            <h2>Notes on the Visualization</h2>
+            <p>When you mouse over a racing line in the primary visualization above, the line will turn black
+                to call it out so that you can see how the rider has performed in the selected race class over
+                time.  Race positions go from 1 to 71.  Position 72 (the bottom of the graph) is equivalent to a
+                <b>DNF</b> (Did Not Finish) race placement (riders that do not finish may have crashed, experienced a
+                mechanical failure, retired, or worse).</p><br />
             <p>We also show other visualizations below when you select a racing line, as well as showing detailed
-                information on the rider in the panel on the right.</p>
-
+                information on the rider in the panel on the right (drill-down & linking functionality).  Also,
+                when you mouse over a rider's racing line, we show two (or three, depending on if the rider has at least
+                one or more rce finishes in the top 5) below the main visualization) sub-visualizations below:</p>
+            <ol class="explanation">
+                <li><b>Left-most sub-visualization - Number of Times Rider Has Come In a Given Position
+                    Per Race Class</b><br />The left-most sub-visualization shows the race
+                    position ("Race Position", X-axis) that the rider has come in a given spot and the number of times
+                    they earned that place ("Number of Race Class Wins", Y-axis).
+                </li>
+                <li><b>Middle sub-visualization - Rider's Average Race Speed Per Year In Selected Race Class</b><br />
+                    The middle sub-visualization shows the rider's average lap speed per year for the currently
+                    moused-over race class.</li>
+                <li><b>Right-most sub-visualization (if applicable) - Rider's Average Race Speed Per Year When
+                    Finishing In Top 5 Spots For Selected Race Class</b><br />
+                    If a rider has finished in the top 5 spots for a given race class, then this chart will show, and
+                    it will display the rider's average lap speed for the currently selected race class per year.
+                    The size of the circles also corresponds to the average lap speed (e.g., greater lap speed circles
+                    will have larger radii).  Since this visualization is data-dependent, to see it you should try
+                    mousing-over some of the upper lines that correspond to top 5 slots.</li>
+            </ol>
+            <p>The visualization also lets you filter the primary visualization area based on a given race class; you
+                may select one race class at a time to display, or select all race classes.  We have plans to improve
+                and extend this filtering more in Project 3 (for our other ideas and things we would like to change/fix,
+                see our <a href="about.html">About</a> page.</p>
         </div>
     </article>
 

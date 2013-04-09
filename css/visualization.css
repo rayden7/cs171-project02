@@ -35,6 +35,7 @@ div#raceClassFilter ul {
     min-height: 750px;
     width: 1100px;
     height: 950px;
+    height: 850px;
     margin: 5px;
     padding: 3px;
     float: left;
@@ -74,7 +75,7 @@ aside {
     #riderInfo {
         margin-top: 0;
         min-height: 650px;
-        height: 750px;
+        height: 695px;
         padding: 10px;
         overflow-y: scroll;
         overflow: -moz-scrollbars-vertical;
